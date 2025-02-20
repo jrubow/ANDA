@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../css/pages/loginpage.css"; // Import CSS
+import { Link } from "react-router-dom";
 
 function LoginPage() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -57,7 +58,7 @@ function LoginPage() {
 
         {/* Links */}
         <div className="links">
-          <a href="#">Create Account</a> | <a href="#">Forgot Password?</a>
+          <Link to="/register">Create Account</Link > | <a href="#">Forgot Password?</a>
         </div>
         <div className="terms">
           <a href="#">Terms</a> | <a href="#">Privacy Policy</a>
