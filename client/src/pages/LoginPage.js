@@ -3,6 +3,7 @@ import "../css/pages/loginpage.css"; // Import CSS
 
 function LoginPage() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="container">
@@ -18,7 +19,22 @@ function LoginPage() {
 
         {/* Input Fields */}
         <input type="text" placeholder="Username" className="input-field" />
-        <input type="password" placeholder="Password" className="input-field" />
+        
+        {/* Password Input with Show/Hide Toggle */}
+        <div className="password-container">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            className="input-field password-input"
+          />
+          <button 
+            type="button"
+            className="show-password-btn"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
 
         {/* Admin Toggle */}
         <label className="switch-label">
