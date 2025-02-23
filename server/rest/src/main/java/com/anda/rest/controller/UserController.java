@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * User API processing
- * @author Gleb Bereziuk, @author Jinhoo Yoon (juhg9543)
+ * @author Gleb Bereziuk, @author Jinhoo Yoon
  */
 
 @RestController
