@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 
 /**
  * User class
- * @author Gleb Bereziuk (gl3bert)
+ * @author Gleb Bereziuk (gl3bert), @author Jinhoo Yoon (juhg9543)
  */
 
 @Entity
