@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 
 /**
  * User class
- * @author Gleb Bereziuk (gl3bert), @author Jinhoo Yoon (juhg9543)
+ * @author Gleb Bereziuk (gl3bert)
  */
 
 @Entity
@@ -95,6 +95,10 @@ public class User {
 
     public int getShare_location() {
         return this.share_location;
+    }
+
+    public Coordinates getCoords(){
+        return this.coords;
     }
 
     public void setUsername(String username) {
