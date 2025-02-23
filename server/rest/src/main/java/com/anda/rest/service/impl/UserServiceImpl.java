@@ -1,6 +1,7 @@
 package com.anda.rest.service.impl;
 
 import com.anda.rest.model.User;
+import com.anda.rest.model.Coordinates;
 import com.anda.rest.repository.UserRepository;
 import com.anda.rest.service.UserService;
 import org.springframework.stereotype.Service;
@@ -51,5 +52,9 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers() {
         // TODO add necessary logic here
         return userRepository.findAll();
+    }
+
+    public Coordinates getCoordinates(String username) {
+        return userRepository.findById(username).get().getCoords();
     }
 }
