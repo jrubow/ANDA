@@ -1,6 +1,7 @@
 package com.anda.rest.controller;
 
 import com.anda.rest.model.User;
+import com.anda.rest.model.Coordinates;
 import com.anda.rest.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 /**
  * User API processing
- * @author Gleb Bereziuk
+ * @author Gleb Bereziuk, @author Jinhoo Yoon (juhg9543)
  */
 
 @RestController
@@ -29,6 +30,9 @@ public class UserController {
     public List<User> getAllUserDetails(String username) {
         return userService.getAllUsers();
     }
+
+    @GetMapping()
+    public Coordinates getCoordinates(String username){ return userService.getCoordinates(username); }
 
     @PostMapping
     public String createUserDetails(@RequestBody User user) {
