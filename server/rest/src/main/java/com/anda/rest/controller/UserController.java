@@ -2,6 +2,7 @@ package com.anda.rest.controller;
 
 import com.anda.rest.model.User;
 import com.anda.rest.model.Coordinates;
+import com.anda.rest.model.WeatherEvent;
 import com.anda.rest.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 /**
  * User API processing
- * @author Gleb Bereziuk, @author Jinhoo Yoon (juhg9543)
+ * @author Gleb Bereziuk, @author Jinhoo Yoon
  */
 
 @RestController
@@ -22,8 +23,8 @@ public class UserController {
     }
 
     @GetMapping("{username}")
-    public User getUserDetails(@PathVariable("username") String username) {
-        return userService.getUser(username);
+    public User getUserDetails(String key, @PathVariable("username") String username) {
+        return userService.getUser(key, username);
     }
 
     @GetMapping()
@@ -32,7 +33,12 @@ public class UserController {
     }
 
     @GetMapping()
-    public Coordinates getCoordinates(String username){ return userService.getCoordinates(username); }
+    public Coordinates getCoordinates(String key, String username){ return userService.getCoordinates(key, username); }
+
+    @GetMapping()
+    public WeatherEvent getWeatherEvent(Integer weatherId) {
+        return userService.getWeatherEvent(weatherId);
+    }
 
     @PostMapping
     public String createUserDetails(@RequestBody User user) {
@@ -40,15 +46,16 @@ public class UserController {
         return "USER CREATED";
     }
 
+
     @PutMapping
-    public String updateUserDetails(@RequestBody User user) {
-        userService.updateUser(user);
+    public String updateUserDetails(String key, String username, @RequestBody User user) {
+        userService.updateUser(key, username, user);
         return "USER UPDATED";
     }
 
     @DeleteMapping("{username}")
-    public String deleteUserDetails(@PathVariable String username) {
-        userService.deleteUser(username);
+    public String deleteUserDetails(String key, @PathVariable String username) {
+        userService.deleteUser(key, username);
         return "USER DELETED";
     }
 }
