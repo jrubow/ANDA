@@ -35,10 +35,6 @@ public class UserController {
     @GetMapping()
     public Coordinates getCoordinates(String key, String username){ return userService.getCoordinates(key, username); }
 
-    @GetMapping()
-    public WeatherEvent getWeatherEvent(Integer weatherId) {
-        return userService.getWeatherEvent(weatherId);
-    }
 
     @PostMapping
     public String createUserDetails(@RequestBody User user) {
