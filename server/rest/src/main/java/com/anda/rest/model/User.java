@@ -24,11 +24,16 @@ public class User {
     private int share_location;
     private int verified;
 
-
     @Embedded
     private Coordinates coords;
+    @Embedded
+    private APIKey key;
 
-    public User() {
+
+    public User() { // This ensures that if we encounter a username or password that is empty, we know it was not actually created properly
+        this.username = "";
+        this.password = "";
+        this.key = new APIKey(); // kind of for guest user as well could work
     }
 
     public User(String username, String password, String email) {
@@ -37,6 +42,8 @@ public class User {
         this.email = email;
         this.share_location = 0; // base setting configuration is to not share location
         this.coords = new Coordinates(); // sets long and lat values to non-valid coordinates
+        this.key = new APIKey(this.username);
+        this.key.generateKey();
     }
 
     public User(String username, String password, String email, String address, int phone_number, int share_location, int work_id, int verified) {
@@ -53,6 +60,8 @@ public class User {
         if (this.share_location == 0) {
             this.coords = new Coordinates();
         }
+        this.key = new APIKey(this.username);
+        this.key.generateKey();
     }
 
     public User(String username, String password, String email, String address, int phone_number, int share_location, int work_id, int verified, double longitude, double latitude) {
@@ -71,6 +80,8 @@ public class User {
             this.coords = new Coordinates();
         }
         coords.setCoordinates(longitude, latitude);
+        this.key = new APIKey(this.username);
+        this.key.generateKey();
     }
 
     public String getUsername() {
