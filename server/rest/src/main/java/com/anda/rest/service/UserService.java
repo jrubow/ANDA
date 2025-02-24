@@ -2,6 +2,7 @@ package com.anda.rest.service;
 
 import com.anda.rest.model.User;
 import com.anda.rest.model.Coordinates;
+import com.anda.rest.model.WeatherEvent;
 
 import java.util.List;
 
@@ -12,9 +13,10 @@ import java.util.List;
 
 public interface UserService {
     public String createUser(User user);
-    public String updateUser(User user);
-    public String deleteUser(String username);
-    public User getUser(String username);
-    public Coordinates getCoordinates(String username);
+    public String updateUser(String key, String username, User user);
+    public String deleteUser(String key, String username);
+    public User getUser(String key, String username);
+    public Coordinates getCoordinates(String key, String username);
     public List<User> getAllUsers();
+    public WeatherEvent getWeatherEvent(int weatherId);
 }
