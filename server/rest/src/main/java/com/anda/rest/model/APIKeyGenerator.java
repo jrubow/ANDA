@@ -23,4 +23,5 @@ public class APIKeyGenerator {
     public synchronized void saveUserKey(APIKey key) {
         apiKeyRepository.save(key);
     }
+
 }

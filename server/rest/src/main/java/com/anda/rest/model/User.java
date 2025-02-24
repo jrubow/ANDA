@@ -14,36 +14,43 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name="users")
 public class User {
-    @Id
-    private String username;
 
+    private String username;
     private String password;
     private String email;
     private String address;
     private int phone_number;
     private int share_location;
     private int verified;
+    private boolean isGuest = false;
 
     @Embedded
     private Coordinates coords;
     @Embedded
     private APIKey key;
 
+    @Id
+    private String API_key = key.getKey();
+
 
     public User() { // This ensures that if we encounter a username or password that is empty, we know it was not actually created properly
         this.username = "";
         this.password = "";
         this.key = new APIKey(); // kind of for guest user as well could work
+        this.share_location = 0;
+        this.isGuest = true;
+        this.key.setUsername(username); // sets username of key so we can backreference from APIKeyRepository
     }
 
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.share_location = 0; // base setting configuration is to not share location
+        this.share_location = 0; // base/default setting configuration is to not share location
         this.coords = new Coordinates(); // sets long and lat values to non-valid coordinates
         this.key = new APIKey(this.username);
         this.key.generateKey();
+        this.key.setUsername(username);
     }
 
     public User(String username, String password, String email, String address, int phone_number, int share_location, int work_id, int verified) {
@@ -62,6 +69,7 @@ public class User {
         }
         this.key = new APIKey(this.username);
         this.key.generateKey();
+        this.key.setUsername(username);
     }
 
     public User(String username, String password, String email, String address, int phone_number, int share_location, int work_id, int verified, double longitude, double latitude) {
@@ -82,10 +90,15 @@ public class User {
         coords.setCoordinates(longitude, latitude);
         this.key = new APIKey(this.username);
         this.key.generateKey();
+        this.key.setUsername(username);
     }
 
     public String getUsername() {
         return this.username;
+    }
+
+    public String getAPI_key() {
+        return this.API_key;
     }
 
     public String getPassword() {
@@ -106,6 +119,10 @@ public class User {
 
     public int getShare_location() {
         return this.share_location;
+    }
+
+    public boolean isGuest() {
+        return this.isGuest;
     }
 
     public Coordinates getCoords(){

@@ -20,4 +20,17 @@ public class APIKey {
     void generateKey() { // creates the key
         this.key = UUID.randomUUID().toString();
     }
+
+    String getKey() {
+        return this.key;
+    }
+
+    String getUsername() {
+        return this.username;
+    }
+
+    void setUsername(String username) {
+        this.username = username;
+    }
+
 }
