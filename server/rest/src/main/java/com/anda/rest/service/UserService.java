@@ -18,5 +18,4 @@ public interface UserService {
     public User getUser(String key, String username);
     public Coordinates getCoordinates(String key, String username);
     public List<User> getAllUsers();
-    public WeatherEvent getWeatherEvent(int weatherId);
 }
