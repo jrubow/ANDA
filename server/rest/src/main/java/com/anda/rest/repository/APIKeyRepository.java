@@ -1,6 +1,7 @@
 package com.anda.rest.repository;
 
 import com.anda.rest.model.APIKey;
+import com.anda.rest.model.WeatherEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
