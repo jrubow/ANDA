@@ -16,7 +16,7 @@ function LoginPage() {
         </div>
 
         {/* Title */}
-        <h2 className="title">User Login</h2>
+        <h2 className="title">Login</h2>
 
         {/* Input Fields */}
         <input type="text" placeholder="Username" className="input-field" />
@@ -36,24 +36,7 @@ function LoginPage() {
             {showPassword ? "Hide" : "Show"}
           </button>
         </div>
-
-        {/* Admin Toggle */}
-        <label className="switch-label">
-          Admin
-          <div className="switch">
-            <input
-              type="checkbox"
-              checked={isAdmin}
-              onChange={() => setIsAdmin(!isAdmin)}
-            />
-            <span className="slider"></span>
-          </div>
-        </label>
-
-        {/* Login Button */}
         <button className="login-button">Login</button>
-
-        {/* Guest Button */}
         <button className="login-button">Guest</button>
 
         {/* Links */}
