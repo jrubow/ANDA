@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsById(username)) {
             User temp = userRepository.findById(username).get();
             String tempKey = temp.getAPI_key();
-            if (apiKeyRepository.findByKey(tempKey).equals(key)) { // if key and username match
+            if (apiKeyRepository.findByKey(tempKey).getKey().equals(key)) { // if key and username match
                 userRepository.save(user);
                 return "USER DELETED";
             }
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsById(username)) {
             User temp = userRepository.findById(username).get();
             String tempKey = temp.getAPI_key();
-            if (apiKeyRepository.findByKey(tempKey).equals(key)) { // if key and username match
+            if (apiKeyRepository.findByKey(tempKey).getKey().equals(key)) { // if key and username match
                 userRepository.delete(temp);
                 return "USER DELETED";
             }
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsById(username)) {
             User temp = userRepository.findById(username).get();
             String tempKey = temp.getAPI_key();
-            if (apiKeyRepository.findByKey(tempKey).equals(key)) { // if key and username match
+            if (apiKeyRepository.findByKey(tempKey).getKey().equals(key)) { // if key and username match
                 return userRepository.findById(username).get();
             }
         }
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsById(username)) {
             User temp = userRepository.findById(username).get();
             String tempKey = temp.getAPI_key();
-            if (apiKeyRepository.findByKey(tempKey).equals(key)) {
+            if (apiKeyRepository.findByKey(tempKey).getKey().equals(key)) {
                 return userRepository.findById(username).get().getCoords();
             }
         }
