@@ -17,19 +17,19 @@ public class APIKey {
         this.username = username; // mostly just to make sure we know if it is a user or not
     }
 
-    void generateKey() { // creates the key
+    public void generateKey() { // creates the key
         this.key = UUID.randomUUID().toString();
     }
 
-    String getKey() {
+    public String getKey() {
         return this.key;
     }
 
-    String getUsername() {
+    public String getUsername() {
         return this.username;
     }
 
-    void setUsername(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
