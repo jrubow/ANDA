@@ -2,10 +2,7 @@ package com.anda.rest.model;
 
 import java.time.ZonedDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 /*
  * Weather class holds weather information such as location, time, temperature, if it is a fire, ice, rain, hail, or some other event, etc.
@@ -13,13 +10,12 @@ import jakarta.persistence.Table;
  */
 
 @Entity
-@Table(name="filters")
+@Table(name="weather_events")
 public class WeatherEvent {
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private static int weather_event_id;
-    private double temperature;
-    private double humidity;
-    private double pressure;
+    private String type;
     private ZonedDateTime time_reported;
     private double radius;
 
@@ -28,12 +24,15 @@ public class WeatherEvent {
 
     public WeatherEvent() {
         this.coordinates = new Coordinates(); // set to  dummy values if empty
+        this.type = "";
     }
 
-    public WeatherEvent(double temperature, double humidity, double pressure, double radius, Coordinates coordinates) {
-        this.temperature = temperature;
-        this.humidity = humidity;
-        this.pressure = pressure;
+    public WeatherEvent(String type, double radius, Coordinates coordinates) throws WeatherException {
+        if (type.equals("snow") || type.equals("rain") || type.equals("fire") || type.equals("thunder") || type.equals("heat_wave")) {
+
+        } else {
+            throw new WeatherException("Invalid weather event type");
+        }
         this.time_reported = ZonedDateTime.now();
         this.radius = radius;
         this.coordinates = coordinates;
@@ -41,18 +40,6 @@ public class WeatherEvent {
 
     public Coordinates getCoordinates() {
         return this.coordinates;
-    }
-
-    public double getTemperature() {
-        return this.temperature;
-    }
-
-    public double getHumidity() {
-        return this.humidity;
-    }
-
-    public double getPressure() {
-        return this.pressure;
     }
 
     public ZonedDateTime getTime() {
