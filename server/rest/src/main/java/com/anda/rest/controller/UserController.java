@@ -1,8 +1,6 @@
 package com.anda.rest.controller;
 
 import com.anda.rest.model.User;
-import com.anda.rest.model.Coordinates;
-import com.anda.rest.model.WeatherEvent;
 import com.anda.rest.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +8,7 @@ import java.util.List;
 
 /**
  * User API processing
- * @author Gleb Bereziuk, @author Jinhoo Yoon
+ * @author Gleb Bereziuk
  */
 
 @RestController
@@ -23,8 +21,8 @@ public class UserController {
     }
 
     @GetMapping("{username}")
-    public User getUserDetails(String key, @PathVariable("username") String username) {
-        return userService.getUser(key, username);
+    public User getUserDetails(@PathVariable("username") String username) {
+        return userService.getUser(username);
     }
 
     @GetMapping()
@@ -32,26 +30,21 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping()
-    public Coordinates getCoordinates(String key, String username){ return userService.getCoordinates(key, username); }
-
-
     @PostMapping
     public String createUserDetails(@RequestBody User user) {
         userService.createUser(user);
         return "USER CREATED";
     }
 
-
     @PutMapping
-    public String updateUserDetails(String key, String username, @RequestBody User user) {
-        userService.updateUser(key, username, user);
+    public String updateUserDetails(@RequestBody User user) {
+        userService.updateUser(user);
         return "USER UPDATED";
     }
 
     @DeleteMapping("{username}")
-    public String deleteUserDetails(String key, @PathVariable String username) {
-        userService.deleteUser(key, username);
+    public String deleteUserDetails(@PathVariable String username) {
+        userService.deleteUser(username);
         return "USER DELETED";
     }
 }
