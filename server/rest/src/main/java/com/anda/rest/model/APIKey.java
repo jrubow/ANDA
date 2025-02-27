@@ -1,24 +1,36 @@
 package com.anda.rest.model;
 
 import java.util.UUID;
-import java.util.*;
 
-/**
- * APIKey class to instantiate keys for users 
- * @author Jinhoo (juhg9543)
- */
 public class APIKey {
+    private String key;
+    private String username;
+    private boolean isGuest;
+    private boolean generated; // keeps track of if a key has already been generated so you don't generate more than once.
+    // May later become extraneous due to revocation of keys, etc.
 
-    private static Map<String, String>APIKeys = new HashMap<>(); // only temporary, will eventually have to add path to SQL server for accessing actual API keys
-    private String APIKey;
-    // Generate a unique Key using UUID
-    public String generateApiKey() {
-        APIKey = UUID.randomUUID().toString();
-        APIKeys.put(apiKey, "guest");  // Store with a guest identifier so we can reuse (placeholder until more functionality is achieved)
-        return APIKey;
+    public APIKey() {
+        this.isGuest = true;
     }
 
-    public boolean isValidApiKey(String APIKey) {
-        return apiKeyStorage.containsKey(APIKey);
+    public APIKey(String username) {
+        this.username = username; // mostly just to make sure we know if it is a user or not
     }
+
+    public void generateKey() { // creates the key
+        this.key = UUID.randomUUID().toString();
+    }
+
+    public String getKey() {
+        return this.key;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
 }
