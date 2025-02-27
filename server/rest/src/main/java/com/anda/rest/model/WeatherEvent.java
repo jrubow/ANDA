@@ -14,7 +14,7 @@ import jakarta.persistence.*;
 public class WeatherEvent {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private static int weather_event_id;
+    private int weather_event_id;
     private String type;
     private ZonedDateTime time_reported;
     private double radius;
