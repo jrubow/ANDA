@@ -57,7 +57,12 @@ function RegisterPage() {
       setLoggedIn(true)
       navigate('/home');
     } catch (error) {
-      console.error("Register Failed:", error.response ? error.response.data : error.message);
+      console.error("Register Failed:", error.response.data);
+      if (error.response.data == "USER ALREADY EXISTS") {
+        alert("Username already exists")
+      } else if (error.response.data == "MAXIMUM PASSWORD ATTEMPTS REACHED") {
+        alert("Maximum password attempts reached. Reset your password.")
+      }
     }
   }
 

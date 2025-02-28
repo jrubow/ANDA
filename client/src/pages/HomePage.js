@@ -11,7 +11,7 @@ function HomePage() {
   };
 
   return (
-    <div className="container">
+    <div className="homepage-container">
       {/* Sidebar */}
       <div className="sidebar">
         <div className="alert-box">
