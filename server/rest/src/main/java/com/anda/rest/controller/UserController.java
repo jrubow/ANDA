@@ -33,10 +33,20 @@ public class UserController {
         }
     }
 
+    @GetMapping("/login")
+    public ResponseEntity<String> showLoginMessage() {
+        return ResponseEntity.ok("Use POST with JSON to log in.");
+    }
+
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
         boolean isCreated = userService.registerUser(user);
         return isCreated ? ResponseEntity.ok("USER REGISTERED") : ResponseEntity.status(400).body("USER ALREADY EXISTS");
+    }
+
+    @GetMapping("/register")
+    public ResponseEntity<String> showRegisterMessage() {
+        return ResponseEntity.ok("Use POST with JSON to register.");
     }
 
     @GetMapping("{username}")
