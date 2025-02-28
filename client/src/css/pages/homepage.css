@@ -1,116 +1,129 @@
 /* Layout */
 .container {
-    display: flex;
-    /* height: calc(100vh - 20%);  */
-    margin-top: 60px; 
-  }
-  
-  /* Sidebar Styling */
-  .sidebar {
-    width: 280px;
-    background-color: #f8f9fa;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    height: 100%;
-    position: fixed;
-    left: 0;
-    top: 60px;
-  }
-  
-  /* Alert Box */
-  .alert-box {
-    background-color: #dc3545;
-    color: white;
-    padding: 15px;
-    text-align: center;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-weight: bold;
-  }
-  
-  .alert-box h2 {
-    font-size: 18px;
-    margin: 0;
-  }
-  
-  .alert-box p {
-    font-size: 14px;
-    margin: 5px 0 0;
-  }
-  
-  /* Navigation */
-  nav ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  nav ul li {
-    padding: 12px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background 0.3s;
-  }
-  
-  nav ul li a {
-    text-decoration: none;
-    color: black;
-    display: block;
-  }
-  
-  nav ul li:hover {
-    background-color: #e2e6ea;
-  }
-  
-  /* Bottom Menu */
-  .bottom-menu {
-    margin-top: auto;
-    bottom: 100px;
-    left: 0;
-    width: 100%;
-    padding: 10px 0;
-    background-color: inherit; 
-  }
-  
-  .bottom-menu ul {
-    list-style: none;
-    padding: 0;
-    border-top: 1px solid #ccc;
-    padding-top: 10px;
-  }
-  
-  .bottom-menu ul li {
-    padding: 12px;
-    cursor: pointer;
-    transition: background 0.3s;
-    border-radius: 5px;
-  }
-  
-  .bottom-menu ul li a {
-    text-decoration: none;
-    color: black;
-    display: block;
-  }
-  
-  .bottom-menu ul li:hover {
-    background-color: #e2e6ea;
-  }
-  
-  /* Map Section */
-  .map-container {
-    flex: 1;
-    margin-left: 240px; /* Pushes map away from sidebar */
-    height: 70%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-  
-  .map-image {
-    height: 10%;
-    object-fit: contain;
-    border-radius: 10px
-  }
-  
+  display: flex;
+  height: calc(100vh - 50px);
+  margin-top: 50px; 
+  overflow: hidden;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: 280px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 70px;
+}
+
+/* Alert Box */
+.alert-box {
+  background-color: #dc3545;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.alert-box h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.alert-box p {
+  font-size: 14px;
+  margin: 5px 0 0;
+}
+
+/* Navigation */
+nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+nav ul li {
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: black;
+  display: block;
+}
+
+nav ul li:hover {
+  background-color: #e2e6ea;
+}
+
+/* Bottom Menu */
+.bottom-menu {
+  margin-top: auto;
+  position: relative;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  padding: 10px 0;
+  background-color: inherit; 
+}
+
+.bottom-menu ul {
+  list-style: none;
+  padding: 0;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}
+
+.bottom-menu ul li {
+  padding: 12px;
+  cursor: pointer;
+  transition: background 0.3s;
+  border-radius: 5px;
+}
+
+.bottom-menu ul li a {
+  text-decoration: none;
+  color: black;
+  display: block;
+}
+
+.bottom-menu ul li:hover {
+  background-color: #e2e6ea;
+}
+
+/* Map Section */
+.map-container {
+  flex: 1;
+  margin-left: 280px; /* Pushes map away from sidebar */
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden; /* Prevents scrolling */
+}
+
+.map-image {
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: 90%;
+  object-fit: contain;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Prevents scrolling */
+/*
+html, body {
+  overflow: hidden;
+}
+  */

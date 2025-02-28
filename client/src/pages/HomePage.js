@@ -20,7 +20,7 @@ function HomePage() {
         </nav>
         <div className="bottom-menu">
           <ul>
-            <li><Link to="/account">Account</Link></li>
+            <li><Link to="/settings">Account</Link></li>
             <li><Link to="/logout">Log Out</Link></li>
           </ul>
         </div>
