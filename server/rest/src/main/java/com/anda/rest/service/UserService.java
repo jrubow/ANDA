@@ -15,6 +15,6 @@ public interface UserService {
     public String deleteUser(String username);
     public User getUser(String username);
     public List<User> getAllUsers();
-    public boolean checkUserCredentials(String user, String password);
+    public User checkUserCredentials(String user, String password);
     boolean registerUser(User user);
 }
