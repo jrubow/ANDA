@@ -33,7 +33,7 @@
 }
 
 .add-photo-btn {
-  background-color: #007bff;
+  background-color: #007BFF;
   color: #fff;
   border: none;
   padding: 8px 12px;
@@ -43,7 +43,7 @@
 }
 
 .add-photo-btn:hover {
-  background-color: #0056b3;
+  background-color: #0056B3;
 }
 
 /* Right side: user details */
@@ -79,16 +79,9 @@
   color: #555;
 }
 
-/* Share location container */
-.share-location {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 /* Update buttons: "Update Password," "Update Email," etc. */
 .update-btn {
-  background-color: #007bff;
+  background-color: #007BFF;
   color: #fff;
   border: none;
   padding: 6px 10px;
@@ -96,19 +89,33 @@
   cursor: pointer;
   font-size: 14px;
   white-space: nowrap;
+  margin-top: 15px;
 }
 
 .update-btn:hover {
-  background-color: #0056b3;
+  background-color: #0056B3;
 }
 
-/* Select for Y/N share location */
-.info-row select {
-  padding: 4px 8px;
+/* Floating share location button at bottom right */
+.floating-share-location {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1100;
+}
+
+.share-location-btn {
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
   border-radius: 4px;
-  border: 1px solid #ccc;
-  outline: none;
   cursor: pointer;
+  font-size: 14px;
+}
+
+.share-location-btn:hover {
+  background-color: #0056B3;
 }
 
 /* Modal overlay */
@@ -135,17 +142,18 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Checkbox group styling */
-.checkbox-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #333;
+/* Input fields for the modals */
+.modal input {
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
 }
 
 /* Close modal button */
 .close-modal-btn {
-  background-color: #007bff;
+  background-color: #007BFF;
   color: #fff;
   border: none;
   padding: 8px 12px;
@@ -156,6 +164,43 @@
 }
 
 .close-modal-btn:hover {
-  background-color: #0056b3;
+  background-color: #0056B3;
 }
 
+/* Weather Filters Title */
+.filters-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Checkbox group styling */
+.checkbox-group {
+  margin-bottom: 15px;
+}
+
+/* Each filter row: checkbox + label */
+.filter-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.filter-row input {
+  margin-right: 8px;
+}
+
+/* Red "Close" button for filter popup */
+.close-filters-btn {
+  background-color: #dc3545; /* red */
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.close-filters-btn:hover {
+  background-color: #c82333; /* darker red */
+}

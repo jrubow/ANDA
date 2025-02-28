@@ -31,7 +31,7 @@ function ReportPage() {
       <div className="content">
         <h2>Make a Report</h2>
 
-        {/* Contact Preference */}
+        {/* Contact Preference */} 
         <div className="dropdown-container">
           <label>Contact Preference:</label>
           <select
@@ -39,7 +39,7 @@ function ReportPage() {
             onChange={(e) => setContactPreference(e.target.value)}
           >
             <option value="">Select</option>
-            <option value="email">Email</option>
+            <option value="email">Email</option> {/* Will need to display these from users account */}
             <option value="phone">Phone</option>
           </select>
         </div>
@@ -93,20 +93,6 @@ function ReportPage() {
             </div>
           )}
         </div>
-
-        {/* Location Input */}
-        {/*}
-        <div className="input-container">
-          <label>Location:</label>
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="Enter location"
-          />
-        </div>
-        {*/}
-        
         
         {/* Location Input */}  
         <div className="input-container location-container">

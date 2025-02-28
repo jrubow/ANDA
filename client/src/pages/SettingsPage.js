@@ -1,33 +1,75 @@
 import { useState, useContext } from "react";
-import {UserContext} from "../components/UserProvider"
+import { UserContext } from "../components/UserProvider";
 import "../css/pages/settingspage.css";
 
-
 function SettingsPage() {
-  const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext)
+  const { user, setUser, loggedIn, setLoggedIn } = useContext(UserContext);
 
+  // State for showing modals
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [showAddressModal, setShowAddressModal] = useState(false);
   const [showFiltersPopup, setShowFiltersPopup] = useState(false);
 
+  // State for new inputs
+  const [newPassword, setNewPassword] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+  const [newAddress, setNewAddress] = useState("");
+
+  // State for share location toggle
+  const [shareLocation, setShareLocation] = useState(false);
+  const toggleShareLocation = () => setShareLocation(!shareLocation);
+
+  // Updated state for weather filters
   const [weatherFilters, setWeatherFilters] = useState({
-    rain: false,
-    sunny: false,
-    cloudy: false,
-    windy: false,
+    temperature: false,
+    precipitation: false,
+    windSpeed: false,
+    humidity: false,
   });
 
-  // Handle share location toggle (Y/N)
-  const handleShareLocationChange = (e) => {
-    const value = e.target.value === "Y";
-    // setFormData({ ...formData, shareLocation: value });
+  // Handlers for updating user info
+  const handlePasswordChange = (e) => {
+    e.preventDefault();
+    if (newPassword) {
+      console.log("Password updated to:", newPassword);
+      setShowPasswordModal(false);
+    }
   };
 
-  // Handle checkbox changes for weather filters
+  const handleEmailChange = (e) => {
+    e.preventDefault();
+    if (newEmail) {
+      console.log("Email updated to:", newEmail);
+      setShowEmailModal(false);
+    }
+  };
+
+  const handlePhoneChange = (e) => {
+    e.preventDefault();
+    if (newPhone) {
+      console.log("Phone number updated to:", newPhone);
+      setShowPhoneModal(false);
+    }
+  };
+
+  const handleAddressChange = (e) => {
+    e.preventDefault();
+    if (newAddress) {
+      console.log("Address updated to:", newAddress);
+      setShowAddressModal(false);
+    }
+  };
+
+  // Handler for weather filters
   const handleWeatherFilterChange = (e) => {
     const { name, checked } = e.target;
-    setWeatherFilters({
-      ...weatherFilters,
+    setWeatherFilters((prevFilters) => ({
+      ...prevFilters,
       [name]: checked,
-    });
+    }));
   };
 
   return (
@@ -35,114 +77,246 @@ function SettingsPage() {
       <div className="profile-section">
         {/* Left side: Profile Photo + "Add Photo" */}
         <div className="profile-photo">
-          <img
-            src="lego_photo.png"
-            alt="Profile"
-            className="profile-img"
-          />
+          <img src="lego_photo.png" alt="Profile" className="profile-img" />
           <button className="add-photo-btn">Add Profile Photo</button>
         </div>
 
         {/* Right side: User Details */}
         <div className="user-info">
-          {/* Full Name + Update Password */}
+          {/* Username */}
           <div className="info-row">
             <div className="label">Username</div>
             <div className="value">{user.username || "Not set"}</div>
           </div>
+
+          {/* Full Name */}
           <div className="info-row">
             <div className="label">Full Name</div>
-            <div className="value">{user.first_name || "Not "} {user.last_name || "set"}</div>
-            <button className="update-btn">Update Password</button>
-          </div>
-
-          {/* Current Address + Share Location (Y/N) */}
-          <div className="info-row">
-            <div className="label">Current Address</div>
-            <div className="value">{user.address || "Not set"}</div>
-            <div className="share-location">
-              <span>Share location:</span>
-              <select
-                value={user.share_location ? "Y" : "N"}
-                onChange={handleShareLocationChange}
-              >
-                <option value="Y">Y</option>
-                <option value="N">N</option>
-              </select>
+            <div className="value">
+              {user.first_name || "Not "} {user.last_name || "set"}
             </div>
           </div>
 
-          {/* Email + Update Email */}
+          {/* Update Password */}
+          <div className="info-row">
+            <div className="label">Password</div>
+            <div className="value">**********</div>
+            <button
+              className="update-btn"
+              onClick={() => setShowPasswordModal(true)}
+            >
+              Update Password
+            </button>
+          </div>
+
+          {/* Update Email */}
           <div className="info-row">
             <div className="label">Email</div>
             <div className="value">{user.email || "Not set"}</div>
-            <button className="update-btn">Update Email</button>
-          </div>
-
-          {/* Primary Phone + Update # */}
-          <div className="info-row">
-            <div className="label">Primary Phone</div>
-            <div className="value">{user.phone_number || "Not set"}</div>
-            <button className="update-btn">Update #</button>
-          </div>
-
-          {/* Filter Preferences */}
-          <div className="info-row">
-            <div className="label">Filter Preferences</div>
             <button
               className="update-btn"
-              onClick={() => setShowFiltersPopup(true)}
+              onClick={() => setShowEmailModal(true)}
             >
-              Edit Filters
+              Update Email
+            </button>
+          </div>
+
+          {/* Update Phone Number */}
+          <div className="info-row">
+            <div className="label">Phone Number</div>
+            <div className="value">{user.phone_number || "Not set"}</div>
+            <button
+              className="update-btn"
+              onClick={() => setShowPhoneModal(true)}
+            >
+              Update Phone Number
+            </button>
+          </div>
+
+          {/* Current Address Row */}
+          <div className="info-row">
+            <div className="label">Current Address</div>
+            <div className="value">{user.address || "Not set"}</div>
+            <button
+              className="update-btn"
+              onClick={() => setShowAddressModal(true)}
+            >
+              Update Address
             </button>
           </div>
         </div>
       </div>
-      {/* Modal Popup for Weather Filters */}
+
+      {/* Filter Preferences Button (centered at the bottom) */}
+      <div style={{ textAlign: "center" }}>
+        <button
+          className="update-btn"
+          onClick={() => setShowFiltersPopup(true)}
+        >
+          Filter Preferences
+        </button>
+      </div>
+
+      {/* Floating Share Location Button at bottom right */}
+      <div className="floating-share-location">
+        <button className="share-location-btn" onClick={toggleShareLocation}>
+          Share Location: {shareLocation ? "Yes" : "No"}
+        </button>
+      </div>
+
+      {/* Password Modal */}
+      {showPasswordModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Update Password</h3>
+            <form onSubmit={handlePasswordChange}>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
+                required
+              />
+              <button type="submit" className="close-modal-btn">
+                Update Password
+              </button>
+            </form>
+            <button
+              className="close-modal-btn"
+              onClick={() => setShowPasswordModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Email Modal */}
+      {showEmailModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Update Email</h3>
+            <form onSubmit={handleEmailChange}>
+              <input
+                type="email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder="Enter new email"
+                required
+              />
+              <button type="submit" className="close-modal-btn">
+                Update Email
+              </button>
+            </form>
+            <button
+              className="close-modal-btn"
+              onClick={() => setShowEmailModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Phone Modal */}
+      {showPhoneModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Update Phone Number</h3>
+            <form onSubmit={handlePhoneChange}>
+              <input
+                type="tel"
+                value={newPhone}
+                onChange={(e) => setNewPhone(e.target.value)}
+                placeholder="Enter new phone number"
+                required
+              />
+              <button type="submit" className="close-modal-btn">
+                Update Phone Number
+              </button>
+            </form>
+            <button
+              className="close-modal-btn"
+              onClick={() => setShowPhoneModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Address Modal */}
+      {showAddressModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Update Address</h3>
+            <form onSubmit={handleAddressChange}>
+              <input
+                type="text"
+                value={newAddress}
+                onChange={(e) => setNewAddress(e.target.value)}
+                placeholder="Enter new address"
+                required
+              />
+              <button type="submit" className="close-modal-btn">
+                Update Address
+              </button>
+            </form>
+            <button
+              className="close-modal-btn"
+              onClick={() => setShowAddressModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Weather Filters Popup Modal */}
       {showFiltersPopup && (
         <div className="modal-overlay">
           <div className="modal">
-            <h3>Weather Filters</h3>
+            <h2 className="filters-title">Weather Filters</h2>
             <div className="checkbox-group">
-              <label>
+              <div className="filter-row">
                 <input
                   type="checkbox"
-                  name="rain"
-                  checked={weatherFilters.rain}
+                  name="temperature"
+                  checked={weatherFilters.temperature}
                   onChange={handleWeatherFilterChange}
                 />
-                Rain
-              </label>
-              <label>
+                <label>Temperature</label>
+              </div>
+              <div className="filter-row">
                 <input
                   type="checkbox"
-                  name="sunny"
-                  checked={weatherFilters.sunny}
+                  name="precipitation"
+                  checked={weatherFilters.precipitation}
                   onChange={handleWeatherFilterChange}
                 />
-                Sunny
-              </label>
-              <label>
+                <label>Precipitation</label>
+              </div>
+              <div className="filter-row">
                 <input
                   type="checkbox"
-                  name="cloudy"
-                  checked={weatherFilters.cloudy}
+                  name="windSpeed"
+                  checked={weatherFilters.windSpeed}
                   onChange={handleWeatherFilterChange}
                 />
-                Cloudy
-              </label>
-              <label>
+                <label>Wind Speed</label>
+              </div>
+              <div className="filter-row">
                 <input
                   type="checkbox"
-                  name="windy"
-                  checked={weatherFilters.windy}
+                  name="humidity"
+                  checked={weatherFilters.humidity}
                   onChange={handleWeatherFilterChange}
                 />
-                Windy
-              </label>
+                <label>Humidity</label>
+              </div>
             </div>
             <button
-              className="close-modal-btn"
+              className="close-filters-btn"
               onClick={() => setShowFiltersPopup(false)}
             >
               Close
