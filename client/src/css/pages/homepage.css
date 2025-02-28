@@ -121,6 +121,68 @@ nav ul li:hover {
   overflow: hidden;
 }
 
+/* Filters Popup */
+.filters-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1001;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.filters-popup-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.filters-popup label {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.close-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.close-btn:hover {
+  background-color: #c82333;
+}
+
+/* Overlay behind popup */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /*background: rgba(0, 0, 0, 0.3); */
+  background-color: transparent;
+  z-index: 1000;
+}
+
+/* Sidebar Button Styling (for Map Layers) */
+.sidebar-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
 /* Prevents scrolling */
 /*
 html, body {
