@@ -1,54 +1,161 @@
-/* Basic styling for the settings container */
-.settings-container {
-    width: 80%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  h2 {
-    text-align: center;
-    color: #333;
-  }
+/* Container for the entire page */
+.settings-page-container {
+  width: 80%;
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px 30px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
 
-  /* Styling for the form */
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Styling for input fields and labels */
-  label {
-    margin: 10px 0;
-    font-size: 14px;
-    color: #555;
-  }
-  
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"] {
-    padding: 10px;
-    font-size: 16px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  input[type="checkbox"] {
-    margin-left: 10px;
-  }
-  /* Styling for when we switch to admin mode */
-  form label input[type="text"],
-  form label input[type="email"],
-  form label input[type="password"] {
-    width: 100%;
-  }
-  
-  form label input[type="checkbox"] {
-    width: auto;
-  }
-  
+/* Profile section: photo on the left, info on the right */
+.profile-section {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Left side: profile photo and "Add Photo" button */
+.profile-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 40px;
+}
+
+.profile-img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.add-photo-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-photo-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Right side: user details */
+.user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each row as a "bubble"/"box" */
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 10px 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 20px; /* "Bubble" shape */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* The label for each row */
+.label {
+  width: 130px;
+  font-weight: bold;
+  color: #333;
+  margin-right: 15px;
+}
+
+/* The displayed value */
+.value {
+  flex: 1;
+  color: #555;
+}
+
+/* Share location container */
+.share-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Update buttons: "Update Password," "Update Email," etc. */
+.update-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.update-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Select for Y/N share location */
+.info-row select {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal content */
+.modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  max-width: 90%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Checkbox group styling */
+.checkbox-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Close modal button */
+.close-modal-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.close-modal-btn:hover {
+  background-color: #0056b3;
+}
+

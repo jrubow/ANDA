@@ -1,83 +1,155 @@
 import { useState } from "react";
-import "../css/pages/settingspage.css"
+import "../css/pages/settingspage.css";
 
 function SettingsPage() {
-  const [isAdmin, setIsAdmin] = useState(false); // Toggle between User/Admin
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
+    fullName: "",
+    currentAddress: "",
     email: "",
-    address: "",
-    phone_number: "",
-    share_location: false,
-    work_id: isAdmin ? "" : null, // Admin-only field
-    verified: isAdmin ? false : null, // Admin-only field
+    primaryPhone: "",
+    shareLocation: false,
   });
 
-  // Handle Input Changes
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
+  const [showFiltersPopup, setShowFiltersPopup] = useState(false);
+
+  const [weatherFilters, setWeatherFilters] = useState({
+    rain: false,
+    sunny: false,
+    cloudy: false,
+    windy: false,
+  });
+
+  // Handle share location toggle (Y/N)
+  const handleShareLocationChange = (e) => {
+    const value = e.target.value === "Y";
+    setFormData({ ...formData, shareLocation: value });
+  };
+
+  // Handle checkbox changes for weather filters
+  const handleWeatherFilterChange = (e) => {
+    const { name, checked } = e.target;
+    setWeatherFilters({
+      ...weatherFilters,
+      [name]: checked,
     });
   };
 
   return (
-    <div className="settings-container">
-      <h2>Settings</h2>
-      <button onClick={() => setIsAdmin(!isAdmin)}>
-        Switch to {isAdmin ? "User" : "Admin"} Mode
-      </button>
+    <div className="settings-page-container">
+      <div className="profile-section">
+        {/* Left side: Profile Photo + "Add Photo" */}
+        <div className="profile-photo">
+          <img
+            src="lego_photo.png"
+            alt="Profile"
+            className="profile-img"
+          />
+          <button className="add-photo-btn">Add Profile Photo</button>
+        </div>
 
-      <form>
-        <label>
-          Username:
-          <input type="text" name="username" value={formData.username} onChange={handleChange} />
-        </label>
+        {/* Right side: User Details */}
+        <div className="user-info">
+          {/* Full Name + Update Password */}
+          <div className="info-row">
+            <div className="label">Full Name</div>
+            <div className="value">{formData.fullName || "Not set"}</div>
+            <button className="update-btn">Update Password</button>
+          </div>
 
-        <label>
-          Password:
-          <input type="password" name="password" value={formData.password} onChange={handleChange} />
-        </label>
+          {/* Current Address + Share Location (Y/N) */}
+          <div className="info-row">
+            <div className="label">Current Address</div>
+            <div className="value">{formData.currentAddress || "Not set"}</div>
+            <div className="share-location">
+              <span>Share location:</span>
+              <select
+                value={formData.shareLocation ? "Y" : "N"}
+                onChange={handleShareLocationChange}
+              >
+                <option value="Y">Y</option>
+                <option value="N">N</option>
+              </select>
+            </div>
+          </div>
 
-        <label>
-          Email:
-          <input type="email" name="email" value={formData.email} onChange={handleChange} />
-        </label>
+          {/* Email + Update Email */}
+          <div className="info-row">
+            <div className="label">Email</div>
+            <div className="value">{formData.email || "Not set"}</div>
+            <button className="update-btn">Update Email</button>
+          </div>
 
-        <label>
-          Address:
-          <input type="text" name="address" value={formData.address} onChange={handleChange} />
-        </label>
+          {/* Primary Phone + Update # */}
+          <div className="info-row">
+            <div className="label">Primary Phone</div>
+            <div className="value">{formData.primaryPhone || "Not set"}</div>
+            <button className="update-btn">Update #</button>
+          </div>
 
-        <label>
-          Phone Number:
-          <input type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} />
-        </label>
-
-        <label>
-          Share Location:
-          <input type="checkbox" name="share_location" checked={formData.share_location} onChange={handleChange} />
-        </label>
-
-        {/* Admin-only fields */}
-        {isAdmin && (
-          <>
-            <label>
-              Work ID:
-              <input type="number" name="work_id" value={formData.work_id} onChange={handleChange} />
-            </label>
-
-            <label>
-              Verified:
-              <input type="checkbox" name="verified" checked={formData.verified} onChange={handleChange} />
-            </label>
-          </>
-        )}
-
-        <button type="submit">Save Settings</button>
-      </form>
+          {/* Filter Preferences */}
+          <div className="info-row">
+            <div className="label">Filter Preferences</div>
+            <button
+              className="update-btn"
+              onClick={() => setShowFiltersPopup(true)}
+            >
+              Edit Filters
+            </button>
+          </div>
+        </div>
+      </div>
+      {/* Modal Popup for Weather Filters */}
+      {showFiltersPopup && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Weather Filters</h3>
+            <div className="checkbox-group">
+              <label>
+                <input
+                  type="checkbox"
+                  name="rain"
+                  checked={weatherFilters.rain}
+                  onChange={handleWeatherFilterChange}
+                />
+                Rain
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="sunny"
+                  checked={weatherFilters.sunny}
+                  onChange={handleWeatherFilterChange}
+                />
+                Sunny
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="cloudy"
+                  checked={weatherFilters.cloudy}
+                  onChange={handleWeatherFilterChange}
+                />
+                Cloudy
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="windy"
+                  checked={weatherFilters.windy}
+                  onChange={handleWeatherFilterChange}
+                />
+                Windy
+              </label>
+            </div>
+            <button
+              className="close-modal-btn"
+              onClick={() => setShowFiltersPopup(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
