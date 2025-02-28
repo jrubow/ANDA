@@ -1,7 +1,9 @@
 package com.anda.rest.controller;
 
+import com.anda.rest.model.LoginRequest;
 import com.anda.rest.model.User;
 import com.anda.rest.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,12 +14,29 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api")
 public class UserController {
 
     UserService userService;
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
+        boolean isValid = userService.checkUserCredentials(loginRequest.getUsername(), loginRequest.getPassword());
+
+        if (isValid) {
+            return ResponseEntity.ok("LOGIN SUCCESSFUL");
+        } else {
+            return ResponseEntity.status(401).body("INVALID CREDENTIALS");
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
+        boolean isCreated = userService.registerUser(user);
+        return isCreated ? ResponseEntity.ok("USER REGISTERED") : ResponseEntity.status(400).body("USER ALREADY EXISTS");
     }
 
     @GetMapping("{username}")

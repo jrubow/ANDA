@@ -52,4 +52,21 @@ public class UserServiceImpl implements UserService {
         // TODO add necessary logic here
         return userRepository.findAll();
     }
+
+    @Override
+    public boolean checkUserCredentials(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        return user != null && user.getPassword().equals(password);
+    }
+
+    public boolean registerUser(User user) {
+        // Check if username is already taken
+        if (userRepository.findByUsername(user.getUsername()) != null) {
+            return false; // User already exists
+        }
+
+        // Save the new user
+        userRepository.save(user);
+        return true;
+    }
 }
