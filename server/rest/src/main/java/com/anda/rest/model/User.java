@@ -40,6 +40,11 @@ public class User {
         this.login_attempts = 0;
     }
 
+    public User(String username, int login_attempts) {
+        this.username = username;
+        this.login_attempts = login_attempts;
+    }
+
     public String getUsername() {
         return username;
     }

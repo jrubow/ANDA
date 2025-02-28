@@ -23,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Transactional
     @Query("UPDATE User u SET u.login_attempts = 0 WHERE u.username = :username")
     void resetLoginAttempts(String username);
+
+    @Query("SELECT u.login_attempts FROM User u WHERE u.username = :username")
+    int getLoginAttempts(String username);
 }

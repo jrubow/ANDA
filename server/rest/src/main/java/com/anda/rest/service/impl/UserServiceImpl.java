@@ -16,6 +16,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
+
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -63,6 +64,8 @@ public class UserServiceImpl implements UserService {
                 userRepository.resetLoginAttempts(username);
                 return user;
             }
+
+            return new User(username, userRepository.getLoginAttempts(username));
         }
         return null;
     }
