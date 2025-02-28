@@ -56,8 +56,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User checkUserCredentials(String username, String password) {
         User user = userRepository.findByUsername(username);
-        if (user != null && user.getPassword().equals(password)) {
-            return user;
+        if (user != null) {
+            userRepository.incrementLoginAttempts(username);
+
+            if (user.getPassword().equals(password)) {
+                userRepository.resetLoginAttempts(username);
+                return user;
+            }
         }
         return null;
     }

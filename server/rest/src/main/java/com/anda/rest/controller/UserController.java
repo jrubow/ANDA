@@ -27,7 +27,11 @@ public class UserController {
         User user = userService.checkUserCredentials(loginRequest.getUsername(), loginRequest.getPassword());
 
         if (user != null) {
+            if (user.getLogin_attempts() > 5) {
+                return ResponseEntity.status(401).body("MAXIMUM PASSWORD ATTEMPTS REACHED");
+            }
             user.setPassword(null);
+            user.setLogin_attempts(0);
             return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(401).body("INVALID CREDENTIALS");
