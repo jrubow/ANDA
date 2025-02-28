@@ -1,0 +1,109 @@
+/* Report Page Container */
+.report-container {
+    margin-top: 50px; /* Same navbar spacing */
+    padding: 20px;
+  }
+  
+  /* Content */
+  .content {
+    margin-top: 20px;
+  }
+  
+  .content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  /* Dropdown Containers */
+  .dropdown-container {
+    margin-bottom: 20px;
+  }
+  
+  /* Flex container for Category and Subcategory */
+  .category-subcategory-container {
+    display: flex;
+    justify-content: flex-start; /* Ensures they are spaced apart */
+    gap: 10px;
+    align-items: center; /* Vertically aligns the dropdowns */
+    width: 100%;
+  }
+  
+  /* Labels */
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  /* Input and Textarea */
+  .input-container input,
+  .input-container textarea,
+  .dropdown-container select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Add Photos */
+  .photo-container {
+    margin-bottom: 20px;
+  }
+  
+  .photo-upload-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .photo-upload-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Submit Button */
+  .submit-btn {
+    background-color: red;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+  }
+  
+  .submit-btn:hover {
+    background-color: darkred;
+  }
+  
+  /* Container for the location input */
+.location-input-container {
+    position: relative; /* Makes sure the button can be placed on top of the input */
+    width: 100%;
+  }
+  
+  /* Input field styling */
+  .input-container input {
+    width: 100%;
+    padding: 8px 35px 8px 8px; /* Add padding on the right to make space for the icon */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Button for the location pin icon */
+  .location-pin-btn {
+    position: absolute;
+    right: 10px; /* Position the icon on the right side */
+    top: 50%;
+    transform: translateY(-50%); /* Vertically center the icon */
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* Optional: Change icon color when hovered */
+  .location-pin-btn:hover {
+    color: #007bff; /* You can change the color to blue or any other color */
+  }
+  
