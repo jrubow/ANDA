@@ -60,12 +60,9 @@ public class UserServiceImpl implements UserService {
     }
 
     public boolean registerUser(User user) {
-        // Check if username is already taken
         if (userRepository.findByUsername(user.getUsername()) != null) {
-            return false; // User already exists
+            return false;
         }
-
-        // Save the new user
         userRepository.save(user);
         return true;
     }
