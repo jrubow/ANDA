@@ -1,14 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import {UserContext} from "../components/UserProvider"
 import "../css/pages/settingspage.css";
 
+
 function SettingsPage() {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    currentAddress: "",
-    email: "",
-    primaryPhone: "",
-    shareLocation: false,
-  });
+  const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext)
 
   const [showFiltersPopup, setShowFiltersPopup] = useState(false);
 
@@ -22,7 +18,7 @@ function SettingsPage() {
   // Handle share location toggle (Y/N)
   const handleShareLocationChange = (e) => {
     const value = e.target.value === "Y";
-    setFormData({ ...formData, shareLocation: value });
+    // setFormData({ ...formData, shareLocation: value });
   };
 
   // Handle checkbox changes for weather filters
@@ -51,19 +47,23 @@ function SettingsPage() {
         <div className="user-info">
           {/* Full Name + Update Password */}
           <div className="info-row">
+            <div className="label">Username</div>
+            <div className="value">{user.username || "Not set"}</div>
+          </div>
+          <div className="info-row">
             <div className="label">Full Name</div>
-            <div className="value">{formData.fullName || "Not set"}</div>
+            <div className="value">{user.first_name || "Not "} {user.last_name || "set"}</div>
             <button className="update-btn">Update Password</button>
           </div>
 
           {/* Current Address + Share Location (Y/N) */}
           <div className="info-row">
             <div className="label">Current Address</div>
-            <div className="value">{formData.currentAddress || "Not set"}</div>
+            <div className="value">{user.address || "Not set"}</div>
             <div className="share-location">
               <span>Share location:</span>
               <select
-                value={formData.shareLocation ? "Y" : "N"}
+                value={user.share_location ? "Y" : "N"}
                 onChange={handleShareLocationChange}
               >
                 <option value="Y">Y</option>
@@ -75,14 +75,14 @@ function SettingsPage() {
           {/* Email + Update Email */}
           <div className="info-row">
             <div className="label">Email</div>
-            <div className="value">{formData.email || "Not set"}</div>
+            <div className="value">{user.email || "Not set"}</div>
             <button className="update-btn">Update Email</button>
           </div>
 
           {/* Primary Phone + Update # */}
           <div className="info-row">
             <div className="label">Primary Phone</div>
-            <div className="value">{formData.primaryPhone || "Not set"}</div>
+            <div className="value">{user.phone_number || "Not set"}</div>
             <button className="update-btn">Update #</button>
           </div>
 

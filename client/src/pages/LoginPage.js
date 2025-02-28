@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "../css/pages/loginpage.css"; // Import CSS
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"
+import { UserContext } from "../components/UserProvider";
 
 function LoginPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext)
   const navigate = useNavigate();
 
   async function login(e) {
@@ -22,6 +24,17 @@ function LoginPage() {
       });
 
       console.log("Login Successful:", response.data);
+      setLoggedIn(true)
+      setUser({
+        username: username,
+        first_name: "test",
+        last_name: "test",
+        password: "test",
+        email: "test",
+        address: "test",
+        phone_number: 0,
+        share_location: 0
+      })
       navigate('/home');
     } catch (error) {
       console.error("Login Failed:", error.response ? error.response.data : error.message);

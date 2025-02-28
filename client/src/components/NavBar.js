@@ -1,10 +1,11 @@
-import React, {useState} from 'react'
+import React, {useContext} from 'react'
 import { Link } from 'react-router-dom';
 import "../css/components/NavBar.css"
 import { MdHome} from "react-icons/md";
+import { UserContext } from "./UserProvider";
 
 function NavBar() {
-    const [loggedIn, setLoggedIn] = useState(false)
+    const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext)
     return (
         <ul className="navbar">
             <h1>ANDA</h1>

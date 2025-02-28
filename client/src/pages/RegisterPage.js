@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import "../css/pages/registerpage.css";
 import axios from "axios"
 import {useNavigate} from "react-router-dom"
+import { UserContext } from "../components/UserProvider";
 
 function RegisterPage() {
   const navigate = useNavigate();
+  const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext)
+
   const [formData, setFormData] = useState({
     email: '',
     firstName: '',
@@ -51,6 +54,7 @@ function RegisterPage() {
       });
 
       console.log("Register Successful:", response.data);
+      setLoggedIn(true)
       navigate('/home');
     } catch (error) {
       console.error("Register Failed:", error.response ? error.response.data : error.message);
@@ -76,6 +80,15 @@ function RegisterPage() {
           <img src="/ANDA_Logo.png" alt="Logo" className="logo" />
         </div>
         <h2>Sign Up</h2>
+
+        <label>Username</label>
+        <input
+          type="username"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          required
+        />
 
         <label>Email</label>
         <input
