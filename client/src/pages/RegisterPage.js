@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import "../css/pages/registerpage.css";
+import axios from "axios"
+import {useNavigate} from "react-router-dom"
 
 function RegisterPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     firstName: '',
     lastName: '',
-    dob: '',
     password: '',
     confirmPassword: '',
   });
@@ -23,6 +25,37 @@ function RegisterPage() {
       [name]: value,
     });
   };
+
+  async function register(e) {
+    e.preventDefault(); 
+    console.log({
+      username: formData.username,
+      password: formData.password,
+      email: formData.email,
+      first_name: formData.first_name,
+      last_name: formData.first_name,
+      address: formData.address,
+      phone_number: formData.phone_number,
+      share_location: true
+    })
+    try {
+      const response = await axios.post("/api/register", {
+        username: formData.username,
+        password: formData.password,
+        email: formData.email,
+        first_name: formData.first_name,
+        last_name: formData.first_name,
+        address: formData.address,
+        phone_number: formData.phone_number,
+        share_location: 0
+      });
+
+      console.log("Register Successful:", response.data);
+      navigate('/home');
+    } catch (error) {
+      console.error("Register Failed:", error.response ? error.response.data : error.message);
+    }
+  }
 
   const validatePassword = () => {
     const passwordValid =
@@ -56,8 +89,8 @@ function RegisterPage() {
         <label>First Name</label>
         <input
           type="text"
-          name="firstName"
-          value={formData.firstName}
+          name="first_name"
+          value={formData.first_name}
           onChange={handleChange}
           required
         />
@@ -65,8 +98,26 @@ function RegisterPage() {
         <label>Last Name</label>
         <input
           type="text"
-          name="lastName"
-          value={formData.lastName}
+          name="last_name"
+          value={formData.last_name}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Address</label>
+        <input
+          type="text"
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+          required
+        />
+
+        <label>Phone Number</label>
+        <input
+          type="text"
+          name="phone_number"
+          value={formData.phone_number}
           onChange={handleChange}
           required
         />
@@ -107,7 +158,7 @@ function RegisterPage() {
           </ul>
         </div>
 
-        <button type="submit" className="button">Create Account</button>
+        <button type="submit" className="button" onClick={register}>Create Account</button>
       </form>
     </div>
   );

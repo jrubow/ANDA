@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../css/pages/loginpage.css"; // Import CSS
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"
 
 function LoginPage() {
@@ -8,17 +8,21 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const navigate = useNavigate();
 
   async function login(e) {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault(); 
 
     try {
-      const response = await axios.post("https://your-api-url.com/login", {
+      console.log(username)
+      console.log(password)
+      const response = await axios.post("/api/login", {
         username: username,
         password: password
       });
 
       console.log("Login Successful:", response.data);
+      navigate('/home');
     } catch (error) {
       console.error("Login Failed:", error.response ? error.response.data : error.message);
     }
