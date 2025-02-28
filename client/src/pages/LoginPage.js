@@ -27,13 +27,13 @@ function LoginPage() {
       setLoggedIn(true)
       setUser({
         username: username,
-        first_name: "test",
-        last_name: "test",
-        password: "test",
-        email: "test",
-        address: "test",
-        phone_number: 0,
-        share_location: 0
+        first_name: response.data.first_name,
+        last_name: response.data.last_name,
+        password: response.data.password,
+        email: response.data.email,
+        address: response.data.address,
+        phone_number: response.data.phone_number,
+        share_location: response.data.share_location
       })
       navigate('/home');
     } catch (error) {

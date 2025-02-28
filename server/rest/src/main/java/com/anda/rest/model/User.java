@@ -21,6 +21,7 @@ public class User {
     private int share_location;
     private String first_name;
     private String last_name;
+    private int login_attempts;
 
     public User() {
     }
@@ -36,6 +37,7 @@ public class User {
         this.share_location = share_location;
         this.first_name = first_name;
         this.last_name = last_name;
+        this.login_attempts = 0;
     }
 
     public String getUsername() {
@@ -100,5 +102,13 @@ public class User {
 
     public void setShare_location(int share_location) {
         this.share_location = share_location;
+    }
+
+    public int getLogin_attempts() {
+        return login_attempts;
+    }
+
+    public void setLogin_attempts(int login_attempts) {
+        this.login_attempts = login_attempts;
     }
 }
