@@ -15,6 +15,7 @@
     padding-left:20px;
     background-color: #007bff;;
     transform: skewX(-10deg);
+    z-index: 100;
   }
   
   .navbar li {
@@ -30,6 +31,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .navbar a {
+    text-decoration:none;
+    color:white;
   }
   
   .navbar li:hover {

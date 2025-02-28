@@ -1,10 +1,43 @@
 import React, { useState } from "react";
 import "../css/pages/loginpage.css"; // Import CSS
 import { Link } from "react-router-dom";
+import axios from "axios"
 
 function LoginPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+
+  async function login(e) {
+    e.preventDefault(); // Prevent default form submission
+
+    try {
+      const response = await axios.post("https://your-api-url.com/login", {
+        username: username,
+        password: password
+      });
+
+      console.log("Login Successful:", response.data);
+    } catch (error) {
+      console.error("Login Failed:", error.response ? error.response.data : error.message);
+    }
+  }
+
+  async function loginGuest(e) {
+    e.preventDefault(); // Prevent default action
+
+    try {
+      const response = await axios.post("https://your-api-url.com/login-guest", {
+        guest: true
+      });
+
+      console.log("Guest Login Successful:", response.data);
+      // Handle guest login
+    } catch (error) {
+      console.error("Guest Login Failed:", error.response ? error.response.data : error.message);
+    }
+  }
 
   return (
     <div className="container">
@@ -19,7 +52,7 @@ function LoginPage() {
         <h2 className="title">Login</h2>
 
         {/* Input Fields */}
-        <input type="text" placeholder="Username" className="input-field" />
+        <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} className="input-field" />
         
         {/* Password Input with Show/Hide Toggle */}
         <div className="password-container">
@@ -27,6 +60,7 @@ function LoginPage() {
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             className="input-field password-input"
+            onChange={(e) => setPassword(e.target.value)}
           />
           <button 
             type="button"
@@ -36,8 +70,8 @@ function LoginPage() {
             {showPassword ? "Hide" : "Show"}
           </button>
         </div>
-        <button className="login-button">Login</button>
-        <button className="login-button">Guest</button>
+        <button onClick={login} className="button">Login</button>
+        <button onClick={loginGuest} className="button">Guest</button>
 
         {/* Links */}
         <div className="links">

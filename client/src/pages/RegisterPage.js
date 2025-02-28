@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import "../css/pages/registerpage.css"; // Import CSS
+import "../css/pages/registerpage.css";
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -39,6 +39,9 @@ function RegisterPage() {
   return (
     <div className="register-container">
       <form className="register-form">
+        <div className="logo-container">
+          <img src="/ANDA_Logo.png" alt="Logo" className="logo" />
+        </div>
         <h2>Sign Up</h2>
 
         <label>Email</label>
@@ -64,15 +67,6 @@ function RegisterPage() {
           type="text"
           name="lastName"
           value={formData.lastName}
-          onChange={handleChange}
-          required
-        />
-
-        <label>Date of Birth</label>
-        <input
-          type="date"
-          name="dob"
-          value={formData.dob}
           onChange={handleChange}
           required
         />
@@ -113,7 +107,7 @@ function RegisterPage() {
           </ul>
         </div>
 
-        <button type="submit" className="register-btn">Create Account</button>
+        <button type="submit" className="button">Create Account</button>
       </form>
     </div>
   );

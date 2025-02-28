@@ -58,8 +58,8 @@
 
 .show-password-btn {
   position: absolute;
-  right: 0px;
-  top: 6.5px;
+  right: 5px;
+  top: 15px;
   background: none;
   border: none;
   color: #007bff;
@@ -79,21 +79,6 @@
 
 .checkbox {
   margin-right: 0.5rem;
-}
-
-.login-button {
-  background-color: #3b82f6;
-  color: white;
-  padding: 0.75rem;
-  width: 100%;
-  border-radius: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-.login-button:hover {
-  background-color: #2563eb;
 }
 
 .links {
