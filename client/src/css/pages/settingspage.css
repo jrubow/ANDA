@@ -24,7 +24,7 @@
 }
 
 .profile-photo button {
-  margin-top:10px;
+  margin-top: 10px;
 }
 
 .profile-img {
@@ -51,11 +51,11 @@
   padding: 20px;
   background-color: #fff;
   border: 1px solid #ddd;
-  border-radius: 20px; /* "Bubble" shape */
+  border-radius: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* The label for each row */
+/* Label styling */
 .label {
   width: 130px;
   font-weight: bold;
@@ -63,13 +63,13 @@
   margin-right: 15px;
 }
 
-/* The displayed value */
+/* Value styling */
 .value {
   flex: 1;
   color: #555;
 }
 
-/* Update buttons: "Update Password," "Update Email," etc. */
+/* Update buttons */
 .update-btn {
   background-color: #007BFF;
   color: #fff;
@@ -79,36 +79,14 @@
   cursor: pointer;
   font-size: 14px;
   white-space: nowrap;
-  width:150px;
+  width: 150px;
 }
 
 .update-btn:hover {
   background-color: #0056B3;
 }
 
-/* Floating share location button at bottom right */
-.floating-share-location {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1100;
-}
-
-.share-location-btn {
-  background-color: #007BFF;
-  color: #fff;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.share-location-btn:hover {
-  background-color: #0056B3;
-}
-
-/* Modal overlay */
+/* Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -122,7 +100,7 @@
   z-index: 1000;
 }
 
-/* Modal content */
+/* Modal Content */
 .modal {
   background: #fff;
   padding: 20px;
@@ -132,7 +110,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Input fields for the modals */
+/* Modal Input Fields */
 .modal input {
   padding: 8px;
   margin: 10px 0;
@@ -141,7 +119,7 @@
   width: 100%;
 }
 
-/* Close modal button */
+/* Close Modal Button */
 .close-modal-btn {
   background-color: #007BFF;
   color: #fff;
@@ -157,43 +135,63 @@
   background-color: #0056B3;
 }
 
-/* Weather Filters Title */
-.filters-title {
-  font-size: 1.4rem;
-  font-weight: bold;
-  margin-bottom: 20px;
+/* Filters Popup (Homepage styling) */
+.filters-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1001;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Checkbox group styling */
-.checkbox-group {
-  margin-bottom: 15px;
-  display:flex;
+.filters-popup-content {
+  display: flex;
   flex-direction: column;
 }
 
-/* Each filter row: checkbox + label */
+.filters-popup label {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Close Button for Popup */
+.close-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.close-btn:hover {
+  background-color: #c82333;
+}
+
+/* Popup Overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: transparent;
+  z-index: 1000;
+}
+
+/* Filter Row styling */
 .filter-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   margin-bottom: 10px;
-  width:100%;
 }
 
 .filter-row input {
   margin-right: 8px;
-}
-
-/* Red "Close" button for filter popup */
-.close-filters-btn {
-  background-color: #dc3545; /* red */
-  color: #fff;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.close-filters-btn:hover {
-  background-color: #c82333; /* darker red */
 }

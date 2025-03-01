@@ -1,28 +1,29 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 import { UserContext } from "../components/UserProvider";
 import "../css/pages/settingspage.css";
 
 function SettingsPage() {
   const { user, setUser, loggedIn, setLoggedIn } = useContext(UserContext);
 
-  // State for showing modals
+  // Modal visibility state
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showFiltersPopup, setShowFiltersPopup] = useState(false);
 
-  // State for new inputs
+  // Input states for user updates
   const [newPassword, setNewPassword] = useState("");
+  const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [newAddress, setNewAddress] = useState("");
 
-  // State for share location toggle
+  // Share location toggle state
   const [shareLocation, setShareLocation] = useState(false);
   const toggleShareLocation = () => setShareLocation(!shareLocation);
 
-  // Updated state for weather filters
+  // Weather filters state
   const [weatherFilters, setWeatherFilters] = useState({
     temperature: false,
     precipitation: false,
@@ -30,11 +31,36 @@ function SettingsPage() {
     humidity: false,
   });
 
+  // Ref for the hidden file input
+  const fileInputRef = useRef(null);
+
+  // Handler for profile photo update
+  const handleProfilePhotoClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleProfilePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      console.log("Selected profile photo:", file);
+      // Optionally, you could create a preview URL and update user state
+      // const imageUrl = URL.createObjectURL(file);
+      // setUser({ ...user, profilePhoto: imageUrl });
+    }
+  };
+
   // Handlers for updating user info
   const handlePasswordChange = (e) => {
     e.preventDefault();
+    if (newPassword !== newPasswordConfirm) {
+      alert("Passwords do not match!");
+      return;
+    }
     if (newPassword) {
       console.log("Password updated to:", newPassword);
+      // Reset fields after updating password
+      setNewPassword("");
+      setNewPasswordConfirm("");
       setShowPasswordModal(false);
     }
   };
@@ -43,6 +69,7 @@ function SettingsPage() {
     e.preventDefault();
     if (newEmail) {
       console.log("Email updated to:", newEmail);
+      setNewEmail("");
       setShowEmailModal(false);
     }
   };
@@ -51,6 +78,7 @@ function SettingsPage() {
     e.preventDefault();
     if (newPhone) {
       console.log("Phone number updated to:", newPhone);
+      setNewPhone("");
       setShowPhoneModal(false);
     }
   };
@@ -59,6 +87,7 @@ function SettingsPage() {
     e.preventDefault();
     if (newAddress) {
       console.log("Address updated to:", newAddress);
+      setNewAddress("");
       setShowAddressModal(false);
     }
   };
@@ -75,31 +104,45 @@ function SettingsPage() {
   return (
     <div className="settings-page-container">
       <div className="profile-section">
-        {/* Left side: Profile Photo + "Add Photo" */}
+        {/* Left side: Profile Photo and options */}
         <div className="profile-photo">
           <img src="lego_photo.png" alt="Profile" className="profile-img" />
-          <button className="update-btn">Add Profile Photo</button>
-          <button className="update-btn" onClick={() => setShowFiltersPopup(true)}>Filter Preferences</button>
-          <button className="update-btn" onClick={toggleShareLocation}>Share Location: {shareLocation ? "Yes" : "No"}</button>
+          <button className="update-btn" onClick={handleProfilePhotoClick}>
+            Add Profile Photo
+          </button>
+          {/* Hidden file input for selecting profile photo */}
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleProfilePhotoChange}
+            style={{ display: "none" }}
+          />
+          <button
+            className="update-btn"
+            onClick={() => setShowFiltersPopup(true)}
+          >
+            Filter Preferences
+          </button>
+          <button className="update-btn" onClick={toggleShareLocation}>
+            Share Location: {shareLocation ? "Yes" : "No"}
+          </button>
         </div>
 
         {/* Right side: User Details */}
         <div className="user-info">
-          {/* Username */}
           <div className="info-row">
             <div className="label">Username</div>
             <div className="value">{user.username || "Not set"}</div>
           </div>
 
-          {/* Full Name */}
           <div className="info-row">
             <div className="label">Full Name</div>
             <div className="value">
-              {user.first_name || "Not "} {user.last_name || "set"}
+              {user.first_name || "Not"} {user.last_name || "set"}
             </div>
           </div>
 
-          {/* Update Password */}
           <div className="info-row">
             <div className="label">Password</div>
             <div className="value">**********</div>
@@ -111,7 +154,6 @@ function SettingsPage() {
             </button>
           </div>
 
-          {/* Update Email */}
           <div className="info-row">
             <div className="label">Email</div>
             <div className="value">{user.email || "Not set"}</div>
@@ -123,7 +165,6 @@ function SettingsPage() {
             </button>
           </div>
 
-          {/* Update Phone Number */}
           <div className="info-row">
             <div className="label">Phone Number</div>
             <div className="value">{user.phone_number || "Not set"}</div>
@@ -135,7 +176,6 @@ function SettingsPage() {
             </button>
           </div>
 
-          {/* Current Address Row */}
           <div className="info-row">
             <div className="label">Current Address</div>
             <div className="value">{user.address || "Not set"}</div>
@@ -160,6 +200,13 @@ function SettingsPage() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Enter new password"
+                required
+              />
+              <input
+                type="password"
+                value={newPasswordConfirm}
+                onChange={(e) => setNewPasswordConfirm(e.target.value)}
+                placeholder="Confirm new password"
                 required
               />
               <button type="submit" className="close-modal-btn">
@@ -257,12 +304,16 @@ function SettingsPage() {
         </div>
       )}
 
-      {/* Weather Filters Popup Modal */}
+      {/* Weather Filters Popup using homepage styling */}
       {showFiltersPopup && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2 className="filters-title">Weather Filters</h2>
-            <div className="checkbox-group">
+        <>
+          <div
+            className="popup-overlay"
+            onClick={() => setShowFiltersPopup(false)}
+          ></div>
+          <div className="filters-popup">
+            <div className="filters-popup-content">
+              <h2 className="filters-title">Weather Filters</h2>
               <div className="filter-row">
                 <input
                   type="checkbox"
@@ -299,15 +350,15 @@ function SettingsPage() {
                 />
                 <label>Humidity</label>
               </div>
+              <button
+                className="close-btn"
+                onClick={() => setShowFiltersPopup(false)}
+              >
+                Close
+              </button>
             </div>
-            <button
-              className="close-filters-btn"
-              onClick={() => setShowFiltersPopup(false)}
-            >
-              Close
-            </button>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
