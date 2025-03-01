@@ -23,6 +23,10 @@
   margin-right: 40px;
 }
 
+.profile-photo button {
+  margin-top:10px;
+}
+
 .profile-img {
   width: 130px;
   height: 130px;
@@ -30,20 +34,6 @@
   object-fit: cover;
   border: 2px solid #ccc;
   margin-bottom: 10px;
-}
-
-.add-photo-btn {
-  background-color: #007BFF;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.add-photo-btn:hover {
-  background-color: #0056B3;
 }
 
 /* Right side: user details */
@@ -58,7 +48,7 @@
   display: flex;
   align-items: center;
   margin-bottom: 16px;
-  padding: 10px 20px;
+  padding: 20px;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 20px; /* "Bubble" shape */
@@ -89,7 +79,7 @@
   cursor: pointer;
   font-size: 14px;
   white-space: nowrap;
-  margin-top: 15px;
+  width:150px;
 }
 
 .update-btn:hover {
@@ -177,13 +167,16 @@
 /* Checkbox group styling */
 .checkbox-group {
   margin-bottom: 15px;
+  display:flex;
+  flex-direction: column;
 }
 
 /* Each filter row: checkbox + label */
 .filter-row {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   margin-bottom: 10px;
+  width:100%;
 }
 
 .filter-row input {

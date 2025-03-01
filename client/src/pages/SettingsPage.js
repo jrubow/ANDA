@@ -78,7 +78,9 @@ function SettingsPage() {
         {/* Left side: Profile Photo + "Add Photo" */}
         <div className="profile-photo">
           <img src="lego_photo.png" alt="Profile" className="profile-img" />
-          <button className="add-photo-btn">Add Profile Photo</button>
+          <button className="update-btn">Add Profile Photo</button>
+          <button className="update-btn" onClick={() => setShowFiltersPopup(true)}>Filter Preferences</button>
+          <button className="update-btn" onClick={toggleShareLocation}>Share Location: {shareLocation ? "Yes" : "No"}</button>
         </div>
 
         {/* Right side: User Details */}
@@ -129,7 +131,7 @@ function SettingsPage() {
               className="update-btn"
               onClick={() => setShowPhoneModal(true)}
             >
-              Update Phone Number
+              Update Phone #
             </button>
           </div>
 
@@ -145,23 +147,6 @@ function SettingsPage() {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Filter Preferences Button (centered at the bottom) */}
-      <div style={{ textAlign: "center" }}>
-        <button
-          className="update-btn"
-          onClick={() => setShowFiltersPopup(true)}
-        >
-          Filter Preferences
-        </button>
-      </div>
-
-      {/* Floating Share Location Button at bottom right */}
-      <div className="floating-share-location">
-        <button className="share-location-btn" onClick={toggleShareLocation}>
-          Share Location: {shareLocation ? "Yes" : "No"}
-        </button>
       </div>
 
       {/* Password Modal */}

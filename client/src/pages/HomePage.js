@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "../css/pages/homepage.css";
 import { Link } from "react-router-dom";
+import { UserContext } from "../components/UserProvider"
 
 function HomePage() {
   // State to toggle the filters popup
   const [showFiltersPopup, setShowFiltersPopup] = useState(false);
+  const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext)
 
   const toggleFiltersPopup = () => {
     setShowFiltersPopup(!showFiltersPopup);
   };
+
+  function logout(e) {
+    e.preventDefault()
+    localStorage.removeItem("user");
+    setLoggedIn(false)
+    console.log("Logging out!")
+  }
 
   return (
     <div className="homepage-container">
@@ -36,12 +45,16 @@ function HomePage() {
         </nav>
         <div className="bottom-menu">
           <ul>
-            <li>
-              <Link to="/settings">Account</Link>
-            </li>
-            <li>
-              <Link to="/logout">Log Out</Link>
-            </li>
+            <Link to="/settings">
+              <button className="button">
+                Account
+              </button>
+            </Link>
+            <Link to="/login">
+              <button className="button" onClick={logout}>
+                Log Out
+              </button>
+            </Link>
           </ul>
         </div>
       </div>
