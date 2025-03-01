@@ -80,7 +80,7 @@ function HomePage() {
             {open && (
               <InfoWindow position={position} onCloseClick={() => setOpen(false)}>
                 <div>
-                  <p>I'm in Hamburg</p>
+                  <p>Clock tower</p>
                 </div>
               </InfoWindow>
             )}
