@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * User API processing
@@ -60,16 +59,8 @@ public class UserController {
         return ResponseEntity.ok("Use POST with JSON to register.");
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<String> updateUser(@RequestBody Map<String, Object> updates) {
-        try {
-            boolean isUpdated = userService.updateUserDetails(updates);
-            return isUpdated ? ResponseEntity.ok("USER UPDATED") : ResponseEntity.status(404).body("USER NOT FOUND");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
-    }
-
+    @GetMapping("/guest")
+    public ResponseEntity<String> showGuestMessage() {  return ResponseEntity.ok("GUEST USER");  }
 
     @GetMapping("{username}")
     public User getUserDetails(@PathVariable("username") String username) {
