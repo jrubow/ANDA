@@ -30,7 +30,7 @@ public class UserController {
             return ResponseEntity.status(401).body("INCORRECT USERNAME");
         }
 
-        if (user.getUsername() == "$WRONGPW" && user.getLogin_attempts() <= 5) {
+        if (user.getUsername() == null && user.getLogin_attempts() <= 5) {
             return ResponseEntity.status(401).body("INCORRECT PASSWORD " + user.getLogin_attempts());
         }
 

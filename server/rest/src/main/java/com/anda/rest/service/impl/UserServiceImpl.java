@@ -64,8 +64,7 @@ public class UserServiceImpl implements UserService {
                 userRepository.resetLoginAttempts(username);
                 return user;
             }
-
-            return new User(username, userRepository.getLoginAttempts(username));
+            return new User(null, userRepository.getLoginAttempts(username));
         }
         return null;
     }
