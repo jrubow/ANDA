@@ -71,7 +71,7 @@ function HomePage() {
       <div className="map-container">
         <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
           <GoogleMap
-            zoom={9}
+            zoom={14.567829}
             center={position}
             mapContainerStyle={{ height: "100%", width: "100%" }}
             mapId={process.env.NEXT_PUBLIC_MAP_ID}
