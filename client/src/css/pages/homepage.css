@@ -188,13 +188,14 @@ nav ul li:hover {
   width: 100%;
 }
 
-
+/*
 html, body, #root, .homepage-container {
   height: 100vh;
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
+  */
 
 
 /* Prevents scrolling */
