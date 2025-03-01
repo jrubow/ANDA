@@ -1,6 +1,7 @@
 import { useState, useContext, useRef } from "react";
 import { UserContext } from "../components/UserProvider";
 import "../css/pages/settingspage.css";
+import axios from "axios"
 
 function SettingsPage() {
   const { user, setUser, loggedIn, setLoggedIn } = useContext(UserContext);
@@ -16,7 +17,7 @@ function SettingsPage() {
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
   const [newEmail, setNewEmail] = useState("");
-  const [newPhone, setNewPhone] = useState("");
+  const [newPhone, setNewPhone] = useState();
   const [newAddress, setNewAddress] = useState("");
 
   // Share location toggle state
@@ -33,6 +34,91 @@ function SettingsPage() {
 
   // Ref for the hidden file input
   const fileInputRef = useRef(null);
+
+  // Update the Email
+  async function updateEmail(e) {
+    e.preventDefault()
+
+    try {
+      const response = await axios.post('/api/update', {
+        username: user.username,
+        [e.target.name]: newEmail
+      })
+
+      setUser({...user, [e.target.name]: newEmail}) 
+      console.log('Data:', response.data);
+      setShowEmailModal(false)
+
+    } catch (error) {
+      console.error('Error Posting Data :', error.message);
+      alert(error.message)
+    }
+  }
+
+  // Update the Password
+  async function updatePassword(e) {
+    e.preventDefault()
+
+    try {
+      const response = await axios.post('/api/update', {
+        username: user.username,
+        [e.target.name]: newPassword
+      })
+
+      setUser({...user, [e.target.name]: newPassword}) 
+      console.log('Data:', response.data);
+      setShowEmailModal(false)
+
+    } catch (error) {
+      console.error('Error Posting Data :', error.message);
+      alert(error.message)
+    }
+  }
+
+  // Update the Phone Number
+  async function updatePhoneNumber(e) {
+    e.preventDefault()
+
+    try {
+      console.log({
+        username: user.username,
+        [e.target.name]: newPhone
+      })
+      const response = await axios.post('/api/update', {
+        username: user.username,
+        [e.target.name]: newPhone
+      })
+
+      setUser({...user, [e.target.name]: newPhone}) 
+      console.log('Data:', response.data);
+      setShowEmailModal(false)
+
+    } catch (error) {
+      console.error('Error Posting Data :', error.message);
+      alert(error.message)
+    }
+  }
+
+    // Update the Phone Number
+    async function updateAddress(e) {
+      e.preventDefault()
+  
+      try {
+        const response = await axios.post('/api/update', {
+          username: user.username,
+          [e.target.name]: newAddress
+        })
+  
+        setUser({...user, [e.target.name]: newAddress}) 
+        console.log('Data:', response.data);
+        setShowEmailModal(false)
+  
+      } catch (error) {
+        console.error('Error Posting Data :', error.message);
+        alert(error.message)
+      }
+    }
+  
 
   // Handler for profile photo update
   const handleProfilePhotoClick = () => {
@@ -78,7 +164,7 @@ function SettingsPage() {
     e.preventDefault();
     if (newPhone) {
       console.log("Phone number updated to:", newPhone);
-      setNewPhone("");
+      setNewPhone();
       setShowPhoneModal(false);
     }
   };
@@ -209,7 +295,7 @@ function SettingsPage() {
                 placeholder="Confirm new password"
                 required
               />
-              <button type="submit" className="close-modal-btn">
+              <button name="password" onClick={updatePassword} className="close-modal-btn">
                 Update Password
               </button>
             </form>
@@ -236,7 +322,7 @@ function SettingsPage() {
                 placeholder="Enter new email"
                 required
               />
-              <button type="submit" className="close-modal-btn">
+              <button name="email" onClick={updateEmail} className="close-modal-btn">
                 Update Email
               </button>
             </form>
@@ -257,13 +343,13 @@ function SettingsPage() {
             <h3>Update Phone Number</h3>
             <form onSubmit={handlePhoneChange}>
               <input
-                type="tel"
+                type="number"
                 value={newPhone}
-                onChange={(e) => setNewPhone(e.target.value)}
+                onChange={(e) => setNewPhone(parseInt(e.target.value, 10) || 0)}
                 placeholder="Enter new phone number"
                 required
               />
-              <button type="submit" className="close-modal-btn">
+              <button name="phone_number" onClick={updatePhoneNumber} className="close-modal-btn">
                 Update Phone Number
               </button>
             </form>
@@ -290,7 +376,7 @@ function SettingsPage() {
                 placeholder="Enter new address"
                 required
               />
-              <button type="submit" className="close-modal-btn">
+              <button name="address" onClick={updateAddress} className="close-modal-btn">
                 Update Address
               </button>
             </form>
