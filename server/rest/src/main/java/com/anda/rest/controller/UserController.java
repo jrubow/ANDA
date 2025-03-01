@@ -26,16 +26,21 @@ public class UserController {
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         User user = userService.checkUserCredentials(loginRequest.getUsername(), loginRequest.getPassword());
 
-        if (user != null) {
-            if (user.getLogin_attempts() > 5) {
-                return ResponseEntity.status(401).body("MAXIMUM PASSWORD ATTEMPTS REACHED");
-            }
-            user.setPassword(null);
-            user.setLogin_attempts(0);
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(401).body("INVALID CREDENTIALS");
+        if (user == null) {
+            return ResponseEntity.status(401).body("INCORRECT USERNAME");
         }
+
+        if (user.getUsername() == null && user.getLogin_attempts() <= 5) {
+            return ResponseEntity.status(401).body("INCORRECT PASSWORD " + user.getLogin_attempts());
+        }
+
+        if (user.getLogin_attempts() > 5) {
+            return ResponseEntity.status(401).body("MAXIMUM PASSWORD ATTEMPTS REACHED");
+        }
+
+        user.setPassword(null);
+        user.setLogin_attempts(0);
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/login")
