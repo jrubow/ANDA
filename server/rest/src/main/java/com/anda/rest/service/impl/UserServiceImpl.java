@@ -6,6 +6,8 @@ import com.anda.rest.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementation for User services
@@ -34,6 +36,48 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return "USER UPDATED IN DATABASE";
     }
+
+    @Override
+    public boolean updateUserDetails(Map<String, Object> updates) {
+        String username = (String) updates.get("username");
+        if (username == null) {
+            throw new IllegalArgumentException("Username is required for updating user details.");
+        }
+
+        User existingUser = userRepository.findByUsername(username);
+        if (existingUser == null) {
+            return false;
+        }
+
+        // Define allowed updatable fields
+        Set<String> allowedFields = Set.of("password", "email", "address", "phone_number", "share_location");
+
+        // Check for unauthorized fields
+        for (String key : updates.keySet()) {
+            if (!allowedFields.contains(key) && !key.equals("username")) {
+                throw new IllegalArgumentException("Field '" + key + "' cannot be modified.");
+            }
+        }
+
+        // Update only allowed fields
+        updates.forEach((key, value) -> {
+            if (value != null) {
+                switch (key) {
+                    case "password" -> existingUser.setPassword((String) value);
+                    case "email" -> existingUser.setEmail((String) value);
+                    case "address" -> existingUser.setAddress((String) value);
+                    case "phone_number" -> existingUser.setPhone_number((Integer) value);
+                    case "share_location" -> existingUser.setShare_location((Integer) value);
+                }
+            }
+        });
+
+        userRepository.save(existingUser);
+        return true;
+    }
+
+
+
 
     @Override
     public String deleteUser(String username) {
