@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import "../css/pages/homepage.css";
 import { Link } from "react-router-dom";
 import { UserContext } from "../components/UserProvider"
+import { LoadScript, GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
 
 function HomePage() {
   // State to toggle the filters popup
@@ -18,6 +19,9 @@ function HomePage() {
     setLoggedIn(false)
     console.log("Logging out!")
   }
+
+  const position = { lat: 40.4273, lng: -86.9141};
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="homepage-container">
@@ -59,9 +63,29 @@ function HomePage() {
         </div>
       </div>
 
-      {/* Map Section */}
+      {/* Map Section
       <div className="map-container">
         <img src="/MainMap.png" alt="Map" className="map-image" />
+      </div>
+      */}
+      <div className="map-container">
+        <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
+          <GoogleMap
+            zoom={9}
+            center={position}
+            mapContainerStyle={{ height: "100%", width: "100%" }}
+            mapId={process.env.NEXT_PUBLIC_MAP_ID}
+          >
+            <Marker position={position} onClick={() => setOpen(true)} />
+            {open && (
+              <InfoWindow position={position} onCloseClick={() => setOpen(false)}>
+                <div>
+                  <p>I'm in Hamburg</p>
+                </div>
+              </InfoWindow>
+            )}
+          </GoogleMap>
+        </LoadScript>
       </div>
 
       {/* Filters Popup */}
