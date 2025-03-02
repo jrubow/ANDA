@@ -17,7 +17,7 @@ public class User {
     private String password;
     private String email;
     private String address;
-    private int phone_number;
+    private String phone_number;
     private int share_location;
     private String first_name;
     private String last_name;
@@ -27,7 +27,7 @@ public class User {
     }
 
     public User(String username, String password, String email, String address,
-                int phone_number, int share_location, int work_id, int verified,
+                String phone_number, int share_location, int work_id, int verified,
                 String first_name, String last_name) {
         this.username = username;
         this.password = password;
@@ -77,7 +77,7 @@ public class User {
         return address;
     }
 
-    public int getPhone_number() {
+    public String getPhone_number() {
         return phone_number;
     }
 
@@ -101,7 +101,7 @@ public class User {
         this.address = address;
     }
 
-    public void setPhone_number(int phone_number) {
+    public void setPhone_number(String phone_number) {
         this.phone_number = phone_number;
     }
 
