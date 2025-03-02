@@ -1,9 +1,10 @@
 package com.anda.rest.service;
 
+import com.anda.rest.model.Report;
 import com.anda.rest.model.User;
+import com.anda.rest.model.Filter;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Interface for User services
@@ -18,5 +19,6 @@ public interface UserService {
     public List<User> getAllUsers();
     public User checkUserCredentials(String user, String password);
     boolean registerUser(User user);
-    public boolean updateUserDetails(Map<String, Object> updates);
+    boolean createFilter(Filter filter);
+    boolean createReport(Report report);
 }
