@@ -1,13 +1,16 @@
 package com.anda.rest.service.impl;
 
 import com.anda.rest.model.User;
+import com.anda.rest.model.Filter;
+import com.anda.rest.model.Report;
 import com.anda.rest.repository.UserRepository;
+import com.anda.rest.repository.FilterRepository;
+import com.anda.rest.repository.ReportRepository;
 import com.anda.rest.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Implementation for User services
@@ -18,9 +21,13 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
+    FilterRepository filterRepository;
+    ReportRepository reportRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, FilterRepository filterRepository, ReportRepository reportRepository) {
         this.userRepository = userRepository;
+        this.filterRepository = filterRepository;
+        this.reportRepository = reportRepository;
     }
 
     @Override
@@ -36,48 +43,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return "USER UPDATED IN DATABASE";
     }
-
-    @Override
-    public boolean updateUserDetails(Map<String, Object> updates) {
-        String username = (String) updates.get("username");
-        if (username == null) {
-            throw new IllegalArgumentException("Username is required for updating user details.");
-        }
-
-        User existingUser = userRepository.findByUsername(username);
-        if (existingUser == null) {
-            return false;
-        }
-
-        // Define allowed updatable fields
-        Set<String> allowedFields = Set.of("password", "email", "address", "phone_number", "share_location");
-
-        // Check for unauthorized fields
-        for (String key : updates.keySet()) {
-            if (!allowedFields.contains(key) && !key.equals("username")) {
-                throw new IllegalArgumentException("Field '" + key + "' cannot be modified.");
-            }
-        }
-
-        // Update only allowed fields
-        updates.forEach((key, value) -> {
-            if (value != null) {
-                switch (key) {
-                    case "password" -> existingUser.setPassword((String) value);
-                    case "email" -> existingUser.setEmail((String) value);
-                    case "address" -> existingUser.setAddress((String) value);
-                    case "phone_number" -> existingUser.setPhone_number((Integer) value);
-                    case "share_location" -> existingUser.setShare_location((Integer) value);
-                }
-            }
-        });
-
-        userRepository.save(existingUser);
-        return true;
-    }
-
-
-
 
     @Override
     public String deleteUser(String username) {
@@ -118,6 +83,32 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         userRepository.save(user);
+        return true;
+    }
+
+    @Transactional
+    public boolean createFilter(Filter filter) {
+        try {
+            if (filterRepository.findByUsername(filter.getUsername()) != null) {
+                System.out.println("Username already exists: " + filter.getUsername());
+                return false;
+            }
+            filterRepository.save(filter);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Error occurred during filter creation: " + e.getMessage());
+            e.printStackTrace();
+            return false; // Or handle exception as needed
+        }
+    }
+
+    @Transactional
+    public boolean createReport(Report report) {
+        if (reportRepository.findById(report.getId()) != null) {
+            System.out.println("Report already exists: " + report.getId());
+            return false;
+        }
+        reportRepository.save(report);
         return true;
     }
 }
