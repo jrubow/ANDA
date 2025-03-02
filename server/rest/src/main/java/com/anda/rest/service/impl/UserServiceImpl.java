@@ -5,13 +5,13 @@ import com.anda.rest.repository.UserRepository;
 import com.anda.rest.service.UserService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * Implementation for User services with validation added.
+ * Service implementation for User
+ * @author Gleb Bereziuk (gl3bert)
  */
 
 @Service
@@ -39,20 +39,6 @@ public class UserServiceImpl implements UserService {
         if (user.getPassword() == null || !Pattern.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", user.getPassword())) {
             throw new IllegalArgumentException("Password must be at least 8 characters long, with one uppercase letter, one lowercase letter, one digit, and one special character.");
         }
-    }
-
-    @Override
-    public String createUser(User user) {
-        validateUser(user);
-        userRepository.save(user);
-        return "USER ADDED TO DATABASE";
-    }
-
-    @Override
-    public String updateUser(User user) {
-        validateUser(user);
-        userRepository.save(user);
-        return "USER UPDATED IN DATABASE";
     }
 
     @Override
@@ -107,27 +93,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String deleteUser(String username) {
-        userRepository.deleteById(username);
-        return "USER DELETED FROM DATABASE";
-    }
-
-    @Override
-    public User getUser(String username) {
-        return userRepository.findById(username).orElse(null);
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    @Override
     public User checkUserCredentials(String username, String password) {
         User user = userRepository.findByUsername(username);
         if (user != null) {
             userRepository.incrementLoginAttempts(username);
-
             if (user.getPassword().equals(password)) {
                 userRepository.resetLoginAttempts(username);
                 return user;
@@ -146,4 +115,9 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return true;
     }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.findByUsername(username) != null;
+    }
+
 }
