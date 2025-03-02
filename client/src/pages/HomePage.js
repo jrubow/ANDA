@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import "../css/pages/homepage.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../components/UserProvider"
 import { LoadScript, GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
 
@@ -8,6 +8,7 @@ function HomePage() {
   // State to toggle the filters popup
   const [showFiltersPopup, setShowFiltersPopup] = useState(false);
   const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext)
+  const navigate = useNavigate();
 
   const toggleFiltersPopup = () => {
     setShowFiltersPopup(!showFiltersPopup);
@@ -18,6 +19,7 @@ function HomePage() {
     localStorage.removeItem("user");
     setLoggedIn(false)
     console.log("Logging out!")
+    navigate("/login")
   }
 
   const position = { lat: 40.4273, lng: -86.9141};
@@ -54,11 +56,9 @@ function HomePage() {
                 Account
               </button>
             </Link>
-            <Link to="/login">
-              <button className="button" onClick={logout}>
-                Log Out
-              </button>
-            </Link>
+            <button className="button" onClick={logout}>
+              Log Out
+            </button>
           </ul>
         </div>
       </div>

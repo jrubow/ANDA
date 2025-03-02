@@ -1,6 +1,11 @@
 package com.anda.rest.model;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -10,39 +15,70 @@ import jakarta.persistence.Table;
  */
 
 @Entity
-@Table(name = "sentinel_device")
+@Table(name = "sentinel_devices")
 public class SentinelDevice extends Device {
 
     // Additional fields specific to SentinelDevice
-    private int is_connected;
     private int num_connected_devices;
+    private String password;
+    private String admin_username;
 
     // Default constructor
     public SentinelDevice() {}
 
     // Parameterized constructor
-    public SentinelDevice(int sensor_id, double latitude, double longitude, double battery_life,
-                          LocalDateTime last_online, LocalDateTime deployed_date, int deployed,
-                          int is_connected, int num_connected_devices) {
+    @JsonCreator
+    public SentinelDevice(
+            @JsonProperty("sensor_id") int sensor_id,
+            @JsonProperty("latitude") double latitude,
+            @JsonProperty("longitude") double longitude,
+            @JsonProperty("battery_life") double battery_life,
+            @JsonProperty("last_online") LocalDateTime last_online,
+            @JsonProperty("deployed_date") LocalDateTime deployed_date,
+            @JsonProperty("deployed") int deployed,
+            @JsonProperty("is_connected") int is_connected,
+            @JsonProperty("num_connected_devices") int num_connected_devices) {
         super(sensor_id, latitude, longitude, battery_life, last_online, deployed_date, deployed);
-        this.is_connected = is_connected;
         this.num_connected_devices = num_connected_devices;
+        this.password = generatePassword(8);
+        this.admin_username = null;
+    }
+
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
+    public static String generatePassword(int length) {
+        SecureRandom random = new SecureRandom();
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            password.append(CHARACTERS.charAt(index));
+        }
+
+        return password.toString();
     }
 
     // Getters and Setters for additional fields
-    public int getIs_connected() {
-        return is_connected;
-    }
-
-    public void setIs_connected(int is_connected) {
-        this.is_connected = is_connected;
-    }
-
-    public int getNum_connected_devices() {
+    public int getNumConnectedDevices() {
         return num_connected_devices;
     }
 
-    public void setNum_connected_devices(int num_connected_devices) {
+    public void setNumConnectedDevices(int num_connected_devices) {
         this.num_connected_devices = num_connected_devices;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getAdminUsername() {
+        return this.admin_username;
+    }
+
+    public void setAdminUsername(String adminUsername) {
+        this.admin_username = adminUsername;
     }
 }

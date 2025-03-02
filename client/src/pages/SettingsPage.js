@@ -67,7 +67,7 @@ function SettingsPage() {
 
       setUser({...user, [e.target.name]: newPassword}) 
       console.log('Data:', response.data);
-      setShowEmailModal(false)
+      setShowPasswordModal(false)
 
     } catch (error) {
       console.error('Error Posting Data :', error.message);
@@ -91,7 +91,7 @@ function SettingsPage() {
 
       setUser({...user, [e.target.name]: newPhone}) 
       console.log('Data:', response.data);
-      setShowEmailModal(false)
+      setShowPhoneModal(false)
 
     } catch (error) {
       console.error('Error Posting Data :', error.message);
@@ -111,7 +111,7 @@ function SettingsPage() {
   
         setUser({...user, [e.target.name]: newAddress}) 
         console.log('Data:', response.data);
-        setShowEmailModal(false)
+        setShowAddressModal(false)
   
       } catch (error) {
         console.error('Error Posting Data :', error.message);
@@ -345,7 +345,7 @@ function SettingsPage() {
               <input
                 type="number"
                 value={newPhone}
-                onChange={(e) => setNewPhone(parseInt(e.target.value, 10) || 0)}
+                onChange={(e) => setNewPhone(e.target.value)}
                 placeholder="Enter new phone number"
                 required
               />

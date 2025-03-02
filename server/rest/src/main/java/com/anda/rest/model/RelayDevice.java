@@ -11,9 +11,10 @@ import jakarta.persistence.Table;
  */
 
 @Entity
-@Table(name = "relay_device")
+@Table(name = "relay_devices")
 public class RelayDevice extends Device {
     private int sentinel_id;
+    private int sentinel_connection;
 
     // Default Constructor
     public RelayDevice() {};
@@ -21,18 +22,31 @@ public class RelayDevice extends Device {
     // Main Constructor
     public RelayDevice(int sensor_id, double latitude, double longitude, double battery_life,
                           LocalDateTime last_online, LocalDateTime deployed_date, int deployed,
-                          int is_connected, int num_connected_devices, int sentinel_id) {
+                          int is_connected, int num_connected_devices, int sentinel_id, int sentinel_connection) {
         super(sensor_id, latitude, longitude, battery_life, last_online, deployed_date, deployed);
         this.sentinel_id = sentinel_id;
+        this.sentinel_connection = sentinel_connection;
     }
 
     // Getter / Setters
-    public int getSentinel_id() {
+    public int getSentinelId() {
         return this.sentinel_id;
     }
 
-    public void setSentinel_id(int sentinel_id) {
+    public void setSentinelId(int sentinel_id) {
         this.sentinel_id = sentinel_id;
+    }
+
+    public int getSentinelConnection() {
+        return this.sentinel_connection;
+    }
+
+    public void setSentinelConnection(int sentinel_connection) {
+        if (sentinel_connection == 0 || sentinel_connection == 1) {
+            this.sentinel_connection = sentinel_connection;
+        } else {
+            throw new IllegalArgumentException("Parameter must be 0 or 1");
+        }
     }
 
     

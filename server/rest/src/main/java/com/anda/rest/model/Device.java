@@ -26,14 +26,17 @@ public abstract class Device {
     @Column( nullable = false)
     private double battery_life;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private LocalDateTime last_online;
 
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private LocalDateTime deployed_date;
 
     @Column(nullable = false)
     private int deployed;
+
+    @Column(nullable = false)
+    private int is_connected;
 
     // Default constructor
     public Device() {}
@@ -51,11 +54,11 @@ public abstract class Device {
     }
 
     // Getters and Setters
-    public int getDevice_id() {
+    public int getDeviceId() {
         return device_id;
     }
 
-    public void setDevice_id(int device_id) {
+    public void setDeviceId(int device_id) {
         this.device_id = device_id;
     }
 
@@ -75,27 +78,27 @@ public abstract class Device {
         this.longitude = longitude;
     }
 
-    public double getBattery_life() {
+    public double getBatteryLife() {
         return battery_life;
     }
 
-    public void setBattery_life(double battery_life) {
+    public void setBatteryLife(double battery_life) {
         this.battery_life = battery_life;
     }
 
-    public LocalDateTime getLast_online() {
+    public LocalDateTime getLastOnline() {
         return last_online;
     }
 
-    public void setLast_online(LocalDateTime last_online) {
+    public void setLastOnline(LocalDateTime last_online) {
         this.last_online = last_online;
     }
 
-    public LocalDateTime getDeployed_date() {
+    public LocalDateTime getDeployedDate() {
         return deployed_date;
     }
 
-    public void setDeployed_date(LocalDateTime deployed_date) {
+    public void setDeployedDate(LocalDateTime deployed_date) {
         this.deployed_date = deployed_date;
     }
 
@@ -106,4 +109,17 @@ public abstract class Device {
     public void setDeployed(int deployed) {
         this.deployed = deployed;
     }
+
+    public int getIsConnected() {
+        return this.is_connected;
+    }
+
+    public void setIsConnected(int is_connected) {
+        if (is_connected == 1 || is_connected == 0) {
+            this.is_connected = is_connected;
+        } else {
+            throw new IllegalArgumentException("Parameter must be 0 or 1");
+        }
+    }
+
 }
