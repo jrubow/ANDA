@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Require authentication (via our API key filter) for all /api/guest/** endpoints
                         .requestMatchers("/api/guest/**").authenticated()
-                        .requestMatchers("/api/user/**").authenticated()
+                        .requestMatchers("/api/login/**").authenticated()
                         // For any other endpoints, you can also require authentication or permit all as needed
                         .anyRequest().authenticated()
                 )

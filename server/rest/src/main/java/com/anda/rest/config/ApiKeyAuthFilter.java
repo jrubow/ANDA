@@ -36,7 +36,7 @@ public class ApiKeyAuthFilter extends GenericFilterBean {
         String apiKey = httpRequest.getHeader("X-API-KEY");
 
         // Retrieve valid API keys from application.properties
-        String validGeneralApiKey = env.getProperty("api.key");
+        String validGeneralApiKey = env.getProperty("user.api.key");
         String validGuestApiKey = env.getProperty("guest.api.key");
 
         if (validGuestApiKey != null && validGuestApiKey.equals(apiKey)) {
