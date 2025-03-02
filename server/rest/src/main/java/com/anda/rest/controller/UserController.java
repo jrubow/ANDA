@@ -1,9 +1,12 @@
 package com.anda.rest.controller;
 
 import com.anda.rest.model.LoginRequest;
+import com.anda.rest.model.Report;
 import com.anda.rest.model.User;
+import com.anda.rest.model.Filter;
 import com.anda.rest.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -60,7 +63,22 @@ public class UserController {
     }
 
     @GetMapping("/guest")
-    public ResponseEntity<String> showGuestMessage() {  return ResponseEntity.ok("GUEST USER");  }
+    public ResponseEntity<String> guestAccess(Authentication authentication) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.ok("Welcome, Guest!");
+        }
+        return ResponseEntity.status(403).body("Access Denied");
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<String> userAccess(Authentication authentication) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"))) {
+            return ResponseEntity.ok("Welcome, User!");
+        }
+        return ResponseEntity.status(403).body("Access Denied");
+    }
 
     @GetMapping("{username}")
     public User getUserDetails(@PathVariable("username") String username) {
@@ -76,6 +94,26 @@ public class UserController {
     public String createUserDetails(@RequestBody User user) {
         userService.createUser(user);
         return "USER CREATED";
+    }
+
+    @PostMapping("/user/filter")
+    public ResponseEntity<String> guestFilterAccess(Authentication authentication, @RequestBody Filter filter) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"))) {
+            userService.createFilter(filter);
+            return ResponseEntity.ok("Welcome, User!");
+        }
+        return ResponseEntity.status(403).body("Access Denied");
+    }
+
+    @PostMapping("/user/report")
+    public ResponseEntity<String> guestReportAccess(Authentication authentication, @RequestBody Report report) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"))) {
+            userService.createReport(report);
+            return ResponseEntity.ok("Welcome, User!");
+        }
+        return ResponseEntity.status(403).body("Access Denied");
     }
 
     @PutMapping
