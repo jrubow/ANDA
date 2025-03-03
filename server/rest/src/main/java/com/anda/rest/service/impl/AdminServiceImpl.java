@@ -34,7 +34,7 @@ public class AdminServiceImpl implements AdminService {
         if (admin.getPhone_number() == null || !Pattern.matches("^\\d{10}$", admin.getPhone_number().toString())) {
             throw new IllegalArgumentException("Phone number must be exactly 10 digits.");
         }
-        if (admin.getPassword() == null || !Pattern.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", admin.getPassword())) {
+        if (admin.getPassword() == null || !Pattern.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$", admin.getPassword())) {
             throw new IllegalArgumentException("Password must be at least 8 characters long, with one uppercase letter, one lowercase letter, one digit, and one special character.");
         }
 

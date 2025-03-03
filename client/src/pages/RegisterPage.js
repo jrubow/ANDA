@@ -1,12 +1,13 @@
 import React, { useState, useContext } from 'react';
 import "../css/pages/registerpage.css";
 import axios from "axios"
-import {useNavigate} from "react-router-dom"
+import {useNavigate, Link} from "react-router-dom"
 import { UserContext } from "../components/UserProvider";
 
 function RegisterPage() {
   const navigate = useNavigate();
   const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext)
+  const [admin, setAdmin] = useState(false)
 
   const [formData, setFormData] = useState({
     email: '',
@@ -14,6 +15,7 @@ function RegisterPage() {
     lastName: '',
     password: '',
     confirmPassword: '',
+    agency_id:  '',
   });
 
   const [errors, setErrors] = useState({
@@ -42,16 +44,33 @@ function RegisterPage() {
       share_location: true
     })
     try {
-      const response = await axios.post("/api/register", {
-        username: formData.username,
-        password: formData.password,
-        email: formData.email,
-        first_name: formData.first_name,
-        last_name: formData.first_name,
-        address: formData.address,
-        phone_number: formData.phone_number,
-        share_location: 0
-      });
+      var userJson = {}
+      if (admin) {
+        userJson = {
+          username: formData.username,
+          password: formData.password,
+          email: formData.email,
+          first_name: formData.first_name,
+          last_name: formData.first_name,
+          address: formData.address,
+          phone_number: formData.phone_number,
+          share_location: 0,
+          agency_id: parseInt(formData.agency_id)
+        }
+      } else {
+        userJson = {
+          username: formData.username,
+          password: formData.password,
+          email: formData.email,
+          first_name: formData.first_name,
+          last_name: formData.first_name,
+          address: formData.address,
+          phone_number: formData.phone_number,
+          share_location: 0
+        }
+      }
+      console.log(userJson)
+      const response = await axios.post("/api/register", userJson);
 
       console.log("Register Successful:", response.data);
       setLoggedIn(true)
@@ -140,6 +159,22 @@ function RegisterPage() {
           required
         />
 
+        {
+          admin ? 
+          <>
+          <label>Agency Id</label>
+          <input
+            type="number"
+            name="agency_id"
+            value={formData.agency_id}
+            onChange={handleChange}
+            required
+          />
+          </>
+          :
+          ""
+        }
+
         <label>Password</label>
         <input
           type="password"
@@ -177,6 +212,14 @@ function RegisterPage() {
         </div>
 
         <button type="submit" className="button" onClick={register}>Create Account</button>
+
+        {/* Links */}
+        <div className="links">
+          <Link to="/login">Login</Link > | {admin ? <a href="#" onClick={() => setAdmin(false)}>General User?</a>  : <a href="#" onClick={() => setAdmin(true)}>Administrator?</a>}
+        </div>
+        <div className="terms">
+          <a href="#">Terms</a> | <a href="#">Privacy Policy</a>
+        </div>
       </form>
     </div>
   );

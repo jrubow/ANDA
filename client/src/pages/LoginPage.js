@@ -33,8 +33,9 @@ function LoginPage() {
         email: response.data.email,
         address: response.data.address,
         phone_number: response.data.phone_number,
-        share_location: response.data.share_location
-      })
+        share_location: response.data.share_location,
+        agency_id: response.data.agency_id === undefined ? null : response.data.agency_id
+      })  
       navigate('/home');
     } catch (error) {
       console.error("Login Failed:", error.response ? error.response.data : error.message);

@@ -6,6 +6,7 @@ const UserProvider = ({ children }) => {
   const storedUser = localStorage.getItem("user");
   const storedLoggedIn = localStorage.getItem("loggedIn");
 
+  // If agency_id is null then this is a normal user otherwise it is an admin
   const [user, setUser] = useState(storedUser ? JSON.parse(storedUser) : {
     username: "",
     first_name: "",
@@ -14,7 +15,8 @@ const UserProvider = ({ children }) => {
     email: "",
     address: "",
     phone_number: 0,
-    share_location: 0
+    share_location: 0,
+    agency_id: null
   });
 
   const [loggedIn, setLoggedIn] = useState(storedLoggedIn === "true");
