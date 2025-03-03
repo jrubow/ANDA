@@ -15,7 +15,7 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping("/api/device/sentinel")
+@RequestMapping("/api/devices/sentinel")
 public class SentinelDeviceController {
 
     SentinelDeviceService sentinelDeviceService;

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 // import org.springframework.data.jpa.repository.Query;
 
 /**
- * Interface for User repository
+ * Interface for Relay repository
  * @author Josh Rubow (jrubow)
  */
 
