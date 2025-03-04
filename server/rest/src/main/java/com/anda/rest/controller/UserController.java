@@ -1,7 +1,7 @@
 package com.anda.rest.controller;
 
 import com.anda.rest.model.LoginRequest;
-import com.anda.rest.model.Report;
+import com.anda.rest.model.WeatherReport;
 import com.anda.rest.model.User;
 import com.anda.rest.model.Filter;
 import com.anda.rest.service.UserService;
@@ -106,11 +106,11 @@ public class UserController {
         return ResponseEntity.status(403).body("Access Denied");
     }
 
-    @PostMapping("/user/report")
-    public ResponseEntity<String> guestReportAccess(Authentication authentication, @RequestBody Report report) {
+    @PostMapping("/user/weather_reports")
+    public ResponseEntity<String> guestReportAccess(Authentication authentication, @RequestBody WeatherReport report) {
         if (authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"))) {
-            userService.createReport(report);
+            userService.createWeatherReport(report);
             return ResponseEntity.ok("Welcome, User!");
         }
         return ResponseEntity.status(403).body("Access Denied");
