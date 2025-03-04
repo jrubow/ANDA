@@ -3,9 +3,9 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
-  position:fixed;
-  top:0px;
-  width:100%
+  position: fixed;
+  top: 0;
+  width: 100%;
 }
 
 /* Sidebar Styling */
@@ -19,7 +19,7 @@
   height: 100%;
   position: fixed;
   left: 0;
-  top: 0px;
+  top: 0;
 }
 
 /* Alert Box */
@@ -74,7 +74,7 @@ nav ul li:hover {
   left: 0;
   width: 100%;
   padding: 10px 0;
-  background-color: inherit; 
+  background-color: inherit;
 }
 
 .bottom-menu ul {
@@ -104,15 +104,15 @@ nav ul li:hover {
 /* Map Section */
 .map-container {
   flex: 1;
-  margin-left: 280px; /* Pushes map away from sidebar */
+  margin-left: 280px;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   position: fixed;
-  top:0px;
-  width:100%;
-  overflow: hidden; /* Prevents scrolling */
+  top: 0;
+  width: 100%;
+  overflow: hidden;
 }
 
 /* Filters Popup */
@@ -160,7 +160,6 @@ nav ul li:hover {
   left: 0;
   width: 100vw;
   height: 100vh;
-  /*background: rgba(0, 0, 0, 0.3); */
   background-color: transparent;
   z-index: 1000;
 }
@@ -177,7 +176,6 @@ nav ul li:hover {
   width: 100%;
 }
 
-
 /* Legend Container */
 .legend {
   position: fixed;
@@ -193,28 +191,16 @@ nav ul li:hover {
   text-align: center;
 }
 
-/* Smaller gradient box to see the map behind more easily */
+/* The gradient-box here is now controlled inline from the component for each weather type */
 .gradient-box {
   height: 15px;
   width: 100%;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 255, 1),
-    rgba(0, 255, 255, 1),
-    rgba(0, 255, 0, 1),
-    rgba(255, 255, 0, 1),
-    rgba(255, 165, 0, 1),
-    rgba(255, 0, 0, 1)
-  );
   margin-bottom: 5px;
 }
 
-/* Label range from min to max temp */
+/* Label range from min to max */
 .legend-labels {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
 }
-
-
-

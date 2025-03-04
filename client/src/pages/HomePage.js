@@ -98,6 +98,14 @@ function HomePage() {
     "rgba(255, 69, 0, 1)",
   ];
 
+  // Map weather type to gradient array for legend display
+  const gradientMap = {
+    temperature: temperatureGradient,
+    humidity: humidityGradient,
+    precipitation: precipitationGradient,
+    windspeed: windspeedGradient,
+  };
+
   // Manage heatmap layers manually based on weatherFilters, heatmapData, and map
   useEffect(() => {
     if (!map) return;
@@ -256,6 +264,7 @@ function HomePage() {
     };
   };
 
+  // Create legend data for each active filter (legend items for active weather types)
   const legendData = Object.keys(weatherFilters)
     .filter((key) => weatherFilters[key])
     .map((key) => ({
@@ -318,22 +327,18 @@ function HomePage() {
               zoomControl: true,
             }}
           >
-            {/* Marker for Lafayette Center */}
-            <Marker position={center} onClick={() => setOpen(true)} />
-            {open && (
-              <InfoWindow position={center} onCloseClick={() => setOpen(false)}>
-                <div>
-                  <p>Lafayette Center</p>
-                </div>
-              </InfoWindow>
-            )}
-            {/* User's location marker */}
+            
+            {/* User's location marker with blue circle symbol (Apple Maps–like) */}
             {user.shareLocation && mapApiLoaded && userLocation && (
               <Marker
                 position={userLocation}
                 icon={{
-                  url: "https://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png",
-                  scaledSize: new window.google.maps.Size(40, 40),
+                  path: window.google.maps.SymbolPath.CIRCLE,
+                  fillColor: "#4285F4",
+                  fillOpacity: 1,
+                  strokeColor: "white",
+                  strokeWeight: 2,
+                  scale: 8,
                 }}
               />
             )}
@@ -359,7 +364,13 @@ function HomePage() {
         <div className="legend">
           {legendData.map(({ type, min, max }) => (
             <div key={type} className="legend-item">
-              <div className="gradient-box"></div>
+              {/* The gradient-box background is set inline to correspond to the event's gradient */}
+              <div
+                className="gradient-box"
+                style={{
+                  background: `linear-gradient(to right, ${gradientMap[type].join(", ")})`,
+                }}
+              ></div>
               <div className="legend-labels">
                 <span>
                   {type.charAt(0).toUpperCase() + type.slice(1)}: {min.toFixed(1)} - {max.toFixed(1)}
