@@ -1,15 +1,16 @@
 package com.anda.rest.controller;
 
-import com.anda.rest.model.AccountFields;
-import com.anda.rest.model.Admin;
-import com.anda.rest.model.LoginRequest;
-import com.anda.rest.model.User;
+import com.anda.rest.model.*;
+import com.anda.rest.service.AgencyService;
+import com.anda.rest.service.EmailService;
 import com.anda.rest.service.UserService;
 import com.anda.rest.service.AdminService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -23,10 +24,14 @@ public class AccountController {
 
     private final UserService userService;
     private final AdminService adminService;
+    private final EmailService emailService;
+    private final AgencyService agencyService;
 
-    public AccountController(UserService userService, AdminService adminService) {
+    public AccountController(UserService userService, AdminService adminService, EmailService emailService, AgencyService agencyService) {
         this.userService = userService;
         this.adminService = adminService;
+        this.emailService = emailService;
+        this.agencyService = agencyService;
     }
 
     @GetMapping("/login")
@@ -50,6 +55,10 @@ public class AccountController {
 
             if (admin.getLogin_attempts() > 5) {
                 return ResponseEntity.status(401).body("MAXIMUM PASSWORD ATTEMPTS REACHED");
+            }
+
+            if (!admin.isVerified()) {
+                return ResponseEntity.status(401).body("ADMIN NOT YET VERIFIED");
             }
 
             admin.setPassword(null);
@@ -95,6 +104,22 @@ public class AccountController {
             admin.setAgency_id(acc.getAgency_id());
 
             boolean isCreated = adminService.registerAdmin(admin);
+
+            if (isCreated)  {
+                Agency agency = agencyService.getAgency(admin.getAgency_id());
+                LocalDateTime now = LocalDateTime.now();
+                emailService.sendEmail(admin.getEmail(), "ANDA: Verify New Agency Admin Account",
+                        "### TEST ### TEST ### TEST ### TEST ### TEST ###\n\n" +
+                                "This is an automatic message from ANDA system.\n" +
+                                "A new admin has just registered with " + agency.getName() + "\n\n" +
+                                "Name: " + admin.getLast_name() + ", " + admin.getFirst_name() +
+                                "Username: " + admin.getUsername() + "\n" +
+                                "Email: " + admin.getEmail() + "\n" +
+                                "Phone number: " + admin.getPhone_number() + "\n\n" +
+                                "To verify this admin, follow the link: ######################" + "\n\n\n" +
+                                now);
+            }
+
             return isCreated ? ResponseEntity.ok("ADMIN REGISTERED")
                     : ResponseEntity.status(400).body("ADMIN ALREADY EXISTS");
         } else {
