@@ -1,6 +1,6 @@
 package com.anda.rest.service;
 
-import com.anda.rest.model.Report;
+import com.anda.rest.model.WeatherReport;
 import com.anda.rest.model.User;
 import com.anda.rest.model.Filter;
 
@@ -20,5 +20,5 @@ public interface UserService {
     public User checkUserCredentials(String user, String password);
     boolean registerUser(User user);
     boolean createFilter(Filter filter);
-    boolean createReport(Report report);
+    boolean createWeatherReport(WeatherReport report);
 }
