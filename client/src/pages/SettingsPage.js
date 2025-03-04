@@ -21,8 +21,12 @@ function SettingsPage() {
   const [newAddress, setNewAddress] = useState("");
 
   // Share location toggle state
-  const [shareLocation, setShareLocation] = useState(false);
-  const toggleShareLocation = () => setShareLocation(!shareLocation);
+  const [shareLocation, setShareLocation] = useState(user.shareLocation);
+
+  function toggleShareLocation(e) {
+    setShareLocation(!user.shareLocation)
+    setUser({...user, shareLocation: !user.shareLocation}) 
+  }
 
   // Weather filters state
   const [weatherFilters, setWeatherFilters] = useState({

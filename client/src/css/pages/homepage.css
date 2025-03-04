@@ -115,17 +115,6 @@ nav ul li:hover {
   overflow: hidden; /* Prevents scrolling */
 }
 
-/*
-.map-image {
-  max-width: 100%;
-  max-height: 100%;
-  width: 100%;
-  height: 90%;
-  object-fit: contain;
-  border-radius: 10px;
-  overflow: hidden;
-} */
-
 /* Filters Popup */
 .filters-popup {
   position: fixed;
@@ -188,19 +177,44 @@ nav ul li:hover {
   width: 100%;
 }
 
-/*
-html, body, #root, .homepage-container {
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+
+/* Legend Container */
+.legend {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  padding: 8px;
+  border-radius: 6px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1002;
+  width: 140px;
+  text-align: center;
 }
-  */
+
+/* Smaller gradient box to see the map behind more easily */
+.gradient-box {
+  height: 15px;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 255, 1),
+    rgba(0, 255, 255, 1),
+    rgba(0, 255, 0, 1),
+    rgba(255, 255, 0, 1),
+    rgba(255, 165, 0, 1),
+    rgba(255, 0, 0, 1)
+  );
+  margin-bottom: 5px;
+}
+
+/* Label range from min to max temp */
+.legend-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+}
 
 
-/* Prevents scrolling */
-/*
-html, body {
-  overflow: hidden;
-}
-  */
+
