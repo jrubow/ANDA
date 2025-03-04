@@ -2,10 +2,10 @@ package com.anda.rest.service.impl;
 
 import com.anda.rest.model.User;
 import com.anda.rest.model.Filter;
-import com.anda.rest.model.Report;
+import com.anda.rest.model.WeatherReport;
 import com.anda.rest.repository.UserRepository;
 import com.anda.rest.repository.FilterRepository;
-import com.anda.rest.repository.ReportRepository;
+import com.anda.rest.repository.WeatherReportRepository;
 import com.anda.rest.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -22,12 +22,12 @@ public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
     FilterRepository filterRepository;
-    ReportRepository reportRepository;
+    WeatherReportRepository weatherReportRepository;
 
-    public UserServiceImpl(UserRepository userRepository, FilterRepository filterRepository, ReportRepository reportRepository) {
+    public UserServiceImpl(UserRepository userRepository, FilterRepository filterRepository, WeatherReportRepository weatherReportRepository) {
         this.userRepository = userRepository;
         this.filterRepository = filterRepository;
-        this.reportRepository = reportRepository;
+        this.weatherReportRepository = weatherReportRepository;
     }
 
     @Override
@@ -103,12 +103,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public boolean createReport(Report report) {
-        if (reportRepository.findById(report.getId()) != null) {
-            System.out.println("Report already exists: " + report.getId());
+    public boolean createWeatherReport(WeatherReport report) {
+        if (weatherReportRepository.findById(report.getReport_Id()) != null) {
+            System.out.println("Report already exists: " + report.getReport_Id());
             return false;
         }
-        reportRepository.save(report);
+        weatherReportRepository.save(report);
         return true;
     }
 }
