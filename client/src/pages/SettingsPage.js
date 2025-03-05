@@ -44,10 +44,19 @@ function SettingsPage() {
     e.preventDefault()
 
     try {
-      const response = await axios.post('/api/update', {
-        username: user.username,
-        [e.target.name]: newEmail
-      })
+      const response = await axios.post(
+          '/api/update',
+          {
+            username: user.username,
+            [e.target.name]: newEmail
+          },
+          {
+            headers: {
+              "X-API-KEY": "user",
+              "Content-Type": "application/json"
+            }
+          }
+      );
 
       setUser({...user, [e.target.name]: newEmail}) 
       console.log('Data:', response.data);
@@ -67,7 +76,14 @@ function SettingsPage() {
       const response = await axios.post('/api/update', {
         username: user.username,
         [e.target.name]: newPassword
-      })
+      },
+      {
+        headers: {
+          "X-API-KEY": "user",
+          "Content-Type": "application/json"
+        }
+      }
+      );
 
       setUser({...user, [e.target.name]: newPassword}) 
       console.log('Data:', response.data);
@@ -91,7 +107,13 @@ function SettingsPage() {
       const response = await axios.post('/api/update', {
         username: user.username,
         [e.target.name]: newPhone
-      })
+      },
+      {
+        headers: {
+          "X-API-KEY": "user",
+          "Content-Type": "application/json"
+        }
+      });
 
       setUser({...user, [e.target.name]: newPhone}) 
       console.log('Data:', response.data);
@@ -111,7 +133,13 @@ function SettingsPage() {
         const response = await axios.post('/api/update', {
           username: user.username,
           [e.target.name]: newAddress
-        })
+        },
+        {
+          headers: {
+            "X-API-KEY": "user",
+            "Content-Type": "application/json"
+          }
+        });
   
         setUser({...user, [e.target.name]: newAddress}) 
         console.log('Data:', response.data);
