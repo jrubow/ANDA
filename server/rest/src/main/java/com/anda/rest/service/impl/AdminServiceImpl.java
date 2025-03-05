@@ -131,4 +131,28 @@ public class AdminServiceImpl implements AdminService {
         return adminRepository.findByUsername(username) != null;
     }
 
+    @Override
+    public boolean verifyAdmin(String username) {
+        Admin admin = adminRepository.findByUsername(username);
+        if (admin != null) {
+            if (!admin.isVerified()) {
+                admin.setVerified(true);
+                adminRepository.save(admin);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Admin getByUsername(String username) {
+        return adminRepository.findByUsername(username);
+    }
+
+    @Override
+    public int getLoginAttempts(String username) {
+        return adminRepository.getLoginAttempts(username);
+    }
+
+
 }

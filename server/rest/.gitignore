@@ -34,5 +34,3 @@ build/
 
 ### SpringBoot ###
 env.properties
-GmailQuickstart.java
-credentials.json

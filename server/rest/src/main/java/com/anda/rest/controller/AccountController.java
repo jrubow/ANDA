@@ -9,7 +9,6 @@ import com.anda.rest.service.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -92,6 +91,11 @@ public class AccountController {
         }
 
         if (acc.getAgency_id() != null) {
+
+            if (!agencyService.existsById(acc.getAgency_id())) {
+                return ResponseEntity.status(400).body("AGENCY DOES NOT EXIST");
+            }
+
             Admin admin = new Admin();
             admin.setUsername(acc.getUsername());
             admin.setPassword(acc.getPassword());
@@ -108,17 +112,27 @@ public class AccountController {
             if (isCreated)  {
                 Agency agency = agencyService.getAgency(admin.getAgency_id());
                 LocalDateTime now = LocalDateTime.now();
-                emailService.sendEmail(admin.getEmail(), "ANDA: Verify New Agency Admin Account",
-                        "### TEST ### TEST ### TEST ### TEST ### TEST ###\n\n" +
+                emailService.sendEmail(agency.getEmail(), "ANDA: Verify New Agency Admin Account",
+                        "### TEST ### TEST ### TEST ### TEST ###\n\n" +
                                 "This is an automatic message from ANDA system.\n" +
-                                "A new admin has just registered with " + agency.getName() + "\n\n" +
-                                "Name: " + admin.getLast_name() + ", " + admin.getFirst_name() +
+                                "A new admin has just registered with " + agency.getName() + ".\n\n" +
+                                "Name: " + admin.getLast_name() + ", " + admin.getFirst_name() + "\n" +
                                 "Username: " + admin.getUsername() + "\n" +
                                 "Email: " + admin.getEmail() + "\n" +
                                 "Phone number: " + admin.getPhone_number() + "\n\n" +
-                                "To verify this admin, follow the link: ######################" + "\n\n\n" +
-                                now);
+                                "To verify this admin, follow the link below\n" +
+                                "http://localhost:8080/api/verify/" + admin.getUsername() + "\n\n\n" +
+                                "Generated: " + now);
+                emailService.sendEmail(admin.getEmail(), "ANDA: Registration confirmation",
+                        "### TEST ### TEST ### TEST ### TEST ###\n\n" +
+                                "This is an automatic message from ANDA system.\n" +
+                                admin.getFirst_name() + ", you have successfully signed up as an admin for " + agency.getName() + ".\n\n" +
+                                "A verification email has been sent to your agency. Once a representative verifies your account," +
+                                "you will get a confirmation email. At that point, you will have access to your account.\n\n" +
+                                "Contact your agency with any questions.\n\n" +
+                                "Generated: " + now);
             }
+
 
             return isCreated ? ResponseEntity.ok("ADMIN REGISTERED")
                     : ResponseEntity.status(400).body("ADMIN ALREADY EXISTS");
@@ -134,8 +148,38 @@ public class AccountController {
             user.setLast_name(acc.getLast_name());
 
             boolean isCreated = userService.registerUser(user);
+
+            if (isCreated) {
+                LocalDateTime now = LocalDateTime.now();
+                emailService.sendEmail(user.getEmail(), "ANDA: Registration confirmation",
+                        "### TEST ### TEST ### TEST ### TEST ###\n\n" +
+                                "This is an automatic message from ANDA system.\n\n" +
+                                user.getFirst_name() + ", thank you for registering with ANDA." +
+                                "We are happy to have you with us!\n\n" +
+                                "Generated" + now);
+
+            }
+
             return isCreated ? ResponseEntity.ok("USER REGISTERED")
                     : ResponseEntity.status(400).body("USER ALREADY EXISTS");
+        }
+    }
+
+    @GetMapping("/verify/{username}")
+    public ResponseEntity<String> verifyAdmin(@PathVariable String username) {
+        boolean isVerified = adminService.verifyAdmin(username);
+        if (isVerified) {
+            Admin admin = adminService.getByUsername(username);
+            LocalDateTime now = LocalDateTime.now();
+            emailService.sendEmail(admin.getEmail(), "ANDA: Verification confirmation",
+                    "### TEST ### TEST ### TEST ### TEST ###\n\n" +
+                            "This is an automatic message from ANDA system.\n\n" +
+                            admin.getFirst_name() + ", you have been verified by your agency. " +
+                            "You now have access to you account!\n\n" +
+                            "Generated" + now);
+            return ResponseEntity.ok("ADMIN VERIFIED SUCCESSFULLY");
+        } else {
+            return ResponseEntity.status(400).body("ADMIN NOT FOUND OR IS ALREADY VERIFIED");
         }
     }
 
