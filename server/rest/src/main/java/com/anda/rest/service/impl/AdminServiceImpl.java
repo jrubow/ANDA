@@ -5,6 +5,7 @@ import com.anda.rest.model.Agency;
 import com.anda.rest.repository.AdminRepository;
 import com.anda.rest.repository.AgencyRepository;
 import com.anda.rest.service.AdminService;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -52,6 +53,10 @@ public class AdminServiceImpl implements AdminService {
             return false;
         }
         validateAdmin(admin);
+
+        String hashedPassword = BCrypt.hashpw(admin.getPassword(), BCrypt.gensalt(12));
+        admin.setPassword(hashedPassword);
+
         adminRepository.save(admin);
         return true;
     }
@@ -61,7 +66,7 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = adminRepository.findByUsername(username);
         if (admin != null) {
             adminRepository.incrementLoginAttempts(username);
-            if (admin.getPassword().equals(password)) {
+            if (BCrypt.checkpw(password, admin.getPassword())) {
                 return admin;
             }
             return new Admin(null, adminRepository.getLoginAttempts(username));
@@ -96,7 +101,7 @@ public class AdminServiceImpl implements AdminService {
                         if (!Pattern.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", (String) value)) {
                             throw new IllegalArgumentException("Password does not meet security requirements.");
                         }
-                        existingAdmin.setPassword((String) value);
+                        existingAdmin.setPassword(BCrypt.hashpw((String) value, BCrypt.gensalt(12)));
                     }
                     case "email" -> {
                         if (!Pattern.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", (String) value)) {
@@ -157,7 +162,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public boolean deleteAdmin(String username, String password) {
         Admin admin = checkAdminCredentials(username, password);
-        if (admin != null) {
+        if (admin != null ) {
             if (admin.getUsername() == null) {
                 return false;
             }
