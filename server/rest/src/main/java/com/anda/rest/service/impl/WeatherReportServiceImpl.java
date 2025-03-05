@@ -88,4 +88,6 @@ public class WeatherReportServiceImpl implements WeatherReportService {
     public List<WeatherReport> getAllWeatherReports() {
         return weatherReportRepository.findAll();
     }
+
+    public List<WeatherReport> getAllWeatherReportsByReport_type(String report_type) { return weatherReportRepository.findWeatherReportsByReport_type(report_type); }
 }

@@ -4,6 +4,7 @@ import com.anda.rest.model.SentinelDevice;
 import com.anda.rest.service.SentinelDeviceService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 // import java.security.SecureRandom;
 import java.util.List;
@@ -27,7 +28,11 @@ public class SentinelDeviceController {
     }
 
     @PostMapping("/initialize")
-    public ResponseEntity<String> initalizeSentinelDevice(@RequestBody SentinelDevice device) {
+    public ResponseEntity<String> initalizeSentinelDevice(Authentication authentication, @RequestBody SentinelDevice device) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
         boolean isCreated = sentinelDeviceService.createSentinelDevice(device);
         return isCreated ? ResponseEntity.ok("SENTINEL DEVICE REGISTERED") : ResponseEntity.status(400).body("SENTINEL DEVICE ALREADY EXISTS");
     }

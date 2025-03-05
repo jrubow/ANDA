@@ -37,13 +37,21 @@ public class FilterController {
             boolean isCreated = filterService.createFilter(filter);
             return isCreated ? ResponseEntity.ok("FILTER CREATED") : ResponseEntity.status(400).body("FILTER ALREADY EXISTS");
         }
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
         return ResponseEntity.status(403).body("Access Denied");
     }
 
     @GetMapping("/username")
-    public ResponseEntity<?> getFilterByUsername(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> getFilterByUsername(Authentication authentication, @RequestBody Map<String, Object> body) {
         try {
             // Extract deviceId from the request body
+            if (authentication != null && authentication.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+                return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+            }
             String username = (String) body.get("username");
             if (username == null) {
                 return ResponseEntity.badRequest()
