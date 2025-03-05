@@ -1,5 +1,6 @@
 package com.anda.rest.service.impl;
 
+import com.anda.rest.model.Admin;
 import com.anda.rest.model.User;
 import com.anda.rest.repository.UserRepository;
 import com.anda.rest.service.UserService;
@@ -118,6 +119,19 @@ public class UserServiceImpl implements UserService {
 
     public boolean existsByUsername(String username) {
         return userRepository.findByUsername(username) != null;
+    }
+
+    @Override
+    public boolean deleteUser(String username, String password) {
+        User user = checkUserCredentials(username, password);
+        if (user != null) {
+            if (user.getUsername() == null) {
+                return false;
+            }
+            userRepository.delete(user);
+            return true;
+        }
+        return false;
     }
 
 }

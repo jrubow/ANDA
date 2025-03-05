@@ -16,4 +16,5 @@ public interface AdminService {
     public boolean verifyAdmin(String username);
     Admin getByUsername(String username);
     public int getLoginAttempts(String username);
+    public boolean deleteAdmin(String username, String password);
 }

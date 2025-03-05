@@ -154,5 +154,16 @@ public class AdminServiceImpl implements AdminService {
         return adminRepository.getLoginAttempts(username);
     }
 
-
+    @Override
+    public boolean deleteAdmin(String username, String password) {
+        Admin admin = checkAdminCredentials(username, password);
+        if (admin != null) {
+            if (admin.getUsername() == null) {
+                return false;
+            }
+            adminRepository.delete(admin);
+            return true;
+        }
+        return false;
+    }
 }

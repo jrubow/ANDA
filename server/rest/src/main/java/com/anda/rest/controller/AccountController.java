@@ -127,7 +127,7 @@ public class AccountController {
                         "### TEST ### TEST ### TEST ### TEST ###\n\n" +
                                 "This is an automatic message from ANDA system.\n" +
                                 admin.getFirst_name() + ", you have successfully signed up as an admin for " + agency.getName() + ".\n\n" +
-                                "A verification email has been sent to your agency. Once a representative verifies your account," +
+                                "A verification email has been sent to your agency. Once a representative verifies your account, " +
                                 "you will get a confirmation email. At that point, you will have access to your account.\n\n" +
                                 "Contact your agency with any questions.\n\n" +
                                 "Generated: " + now);
@@ -177,7 +177,8 @@ public class AccountController {
                             admin.getFirst_name() + ", you have been verified by your agency. " +
                             "You now have access to you account!\n\n" +
                             "Generated" + now);
-            return ResponseEntity.ok("ADMIN VERIFIED SUCCESSFULLY");
+            return ResponseEntity.ok("ANDA: Admin " + admin.getLast_name() + ", " + admin.getFirst_name() +
+                    " at agency " + admin.getAgency_id() + " verified successfully!");
         } else {
             return ResponseEntity.status(400).body("ADMIN NOT FOUND OR IS ALREADY VERIFIED");
         }
@@ -188,7 +189,7 @@ public class AccountController {
         try {
             String username = (String) updates.get("username");
             if (username == null) {
-                return ResponseEntity.status(400).body("Username is required for updating account details.");
+                return ResponseEntity.status(400).body("USERNAME REQUIRED FOR UPDATING ACCOUNT");
             }
 
             boolean isUpdated = false;
@@ -203,6 +204,21 @@ public class AccountController {
                     : ResponseEntity.status(404).body("ACCOUNT NOT FOUND");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteAccount(@RequestBody LoginRequest request) {
+        boolean isDeleted = userService.deleteUser(request.getUsername(), request.getPassword());
+        if (!isDeleted) {
+            isDeleted = adminService.deleteAdmin(request.getUsername(), request.getPassword());
+            if (isDeleted) {
+                return ResponseEntity.ok("ADMIN ACCOUNT DELETED SUCCESSFULLY");
+            }
+            return ResponseEntity.status(400).body("INVALID CREDENTIALS OR USERNAME NOT FOUND");
+        }
+        else {
+            return ResponseEntity.ok("USER ACCOUNT DELETED SUCCESSFULLY");
         }
     }
 }
