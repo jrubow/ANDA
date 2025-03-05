@@ -1,8 +1,9 @@
 package com.anda.rest.service.impl;
 
 import com.anda.rest.model.Admin;
-import com.anda.rest.model.User;
+import com.anda.rest.model.Agency;
 import com.anda.rest.repository.AdminRepository;
+import com.anda.rest.repository.AgencyRepository;
 import com.anda.rest.service.AdminService;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +20,10 @@ import java.util.regex.Pattern;
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository adminRepository;
-
-    public AdminServiceImpl(AdminRepository adminRepository) {
+    private final AgencyRepository agencyRepository;
+    public AdminServiceImpl(AdminRepository adminRepository, AgencyRepository agencyRepository) {
         this.adminRepository = adminRepository;
+        this.agencyRepository = agencyRepository;
     }
 
     private void validateAdmin(Admin admin) {
@@ -38,8 +40,9 @@ public class AdminServiceImpl implements AdminService {
             throw new IllegalArgumentException("Password must be at least 8 characters long, with one uppercase letter, one lowercase letter, one digit, and one special character.");
         }
 
-        if (admin.getAgency_id() < 0) {
-            throw new IllegalArgumentException("Agency ID must be a positive integer.");
+        Agency a = agencyRepository.findAgencyByAgency_id(admin.getAgency_id());
+        if (a == null) {
+            throw new IllegalArgumentException("Agency not found.");
         }
     }
 
@@ -127,5 +130,29 @@ public class AdminServiceImpl implements AdminService {
     public boolean existsByUsername(String username) {
         return adminRepository.findByUsername(username) != null;
     }
+
+    @Override
+    public boolean verifyAdmin(String username) {
+        Admin admin = adminRepository.findByUsername(username);
+        if (admin != null) {
+            if (!admin.isVerified()) {
+                admin.setVerified(true);
+                adminRepository.save(admin);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Admin getByUsername(String username) {
+        return adminRepository.findByUsername(username);
+    }
+
+    @Override
+    public int getLoginAttempts(String username) {
+        return adminRepository.getLoginAttempts(username);
+    }
+
 
 }
