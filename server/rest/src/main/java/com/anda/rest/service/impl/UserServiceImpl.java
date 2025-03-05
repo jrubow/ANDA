@@ -1,8 +1,10 @@
 package com.anda.rest.service.impl;
 
+import com.anda.rest.model.Admin;
 import com.anda.rest.model.User;
 import com.anda.rest.repository.UserRepository;
 import com.anda.rest.service.UserService;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -68,7 +70,7 @@ public class UserServiceImpl implements UserService {
                         if (!Pattern.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", (String) value)) {
                             throw new IllegalArgumentException("Password does not meet security requirements.");
                         }
-                        existingUser.setPassword((String) value);
+                        existingUser.setPassword(BCrypt.hashpw((String) value, BCrypt.gensalt(12)));
                     }
                     case "email" -> {
                         if (!Pattern.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", (String) value)) {
@@ -97,7 +99,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(username);
         if (user != null) {
             userRepository.incrementLoginAttempts(username);
-            if (user.getPassword().equals(password)) {
+            if (BCrypt.checkpw(password, user.getPassword())) {
                 userRepository.resetLoginAttempts(username);
                 return user;
             }
@@ -112,12 +114,29 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         validateUser(user);
+
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12));
+        user.setPassword(hashedPassword);
+
         userRepository.save(user);
         return true;
     }
 
     public boolean existsByUsername(String username) {
         return userRepository.findByUsername(username) != null;
+    }
+
+    @Override
+    public boolean deleteUser(String username, String password) {
+        User user = checkUserCredentials(username, password);
+        if (user != null) {
+            if (user.getUsername() == null) {
+                return false;
+            }
+            userRepository.delete(user);
+            return true;
+        }
+        return false;
     }
 
 }

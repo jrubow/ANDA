@@ -3,6 +3,11 @@ package com.anda.rest.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
+/**
+ * Admin object
+ * @author Gleb Bereziuk (gl3bert)
+ */
+
 @Entity
 @Table(name = "admins")
 public class Admin extends Account {
