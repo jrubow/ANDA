@@ -38,8 +38,12 @@ public class SentinelDeviceController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> updateSentinelDevice(@RequestBody Map<String, Object> updates) {
+    public ResponseEntity<String> updateSentinelDevice(Authentication authentication, @RequestBody Map<String, Object> updates) {
         try {
+            if (authentication != null && authentication.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+                return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+            }
             boolean isUpdated = sentinelDeviceService.updateSentinelDevice(updates);
             return isUpdated ? ResponseEntity.ok("SENTINEL DEVICE UPDATED") : ResponseEntity.status(404).body("SENTINEL DEVICE NOT FOUND");
         } catch (IllegalArgumentException e) {

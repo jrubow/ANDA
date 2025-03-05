@@ -39,6 +39,10 @@ public class WeatherReportController {
             boolean isCreated = weatherReportService.createWeatherReport(weatherReport);
             return isCreated ? ResponseEntity.ok("REPORT CREATED") : ResponseEntity.status(400).body("FILTER ALREADY EXISTS");
         }
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
         return ResponseEntity.status(403).body("Access Denied");
     }
 

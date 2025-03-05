@@ -7,6 +7,7 @@ import com.anda.rest.service.UserService;
 import com.anda.rest.service.AdminService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -33,13 +34,29 @@ public class AccountController {
         this.agencyService = agencyService;
     }
 
+    @GetMapping("/login-guest")
+    public ResponseEntity<String> showGuestMessage() { return ResponseEntity.ok("ANDA Guest Page"); }
+
+    @PostMapping("/login-guest")
+    public ResponseEntity<?> guest(Authentication authentication) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.ok().body("Welcome, Guest!");
+        }
+        return ResponseEntity.status(403).body("Access Denied");
+    }
+
     @GetMapping("/login")
     public ResponseEntity<String> showLoginMessage() {
         return ResponseEntity.ok("ANDA Login Page");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(Authentication authentication, @RequestBody LoginRequest loginRequest) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
         User user = userService.checkUserCredentials(loginRequest.getUsername(), loginRequest.getPassword());
         if (user == null) {
             Admin admin = adminService.checkAdminCredentials(loginRequest.getUsername(), loginRequest.getPassword());
@@ -166,7 +183,11 @@ public class AccountController {
     }
 
     @GetMapping("/verify/{username}")
-    public ResponseEntity<String> verifyAdmin(@PathVariable String username) {
+    public ResponseEntity<String> verifyAdmin(Authentication authentication, @PathVariable String username) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
         boolean isVerified = adminService.verifyAdmin(username);
         if (isVerified) {
             Admin admin = adminService.getByUsername(username);
@@ -185,7 +206,11 @@ public class AccountController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<String> updateAccount(@RequestBody Map<String, Object> updates) {
+    public ResponseEntity<String> updateAccount(Authentication authentication, @RequestBody Map<String, Object> updates) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
         try {
             String username = (String) updates.get("username");
             if (username == null) {
@@ -208,7 +233,11 @@ public class AccountController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<String> deleteAccount(@RequestBody LoginRequest request) {
+    public ResponseEntity<String> deleteAccount(Authentication authentication, @RequestBody LoginRequest request) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
         boolean isDeleted = userService.deleteUser(request.getUsername(), request.getPassword());
         if (!isDeleted) {
             isDeleted = adminService.deleteAdmin(request.getUsername(), request.getPassword());

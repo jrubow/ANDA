@@ -70,8 +70,12 @@ function RegisterPage() {
         }
       }
       console.log(userJson)
-      const response = await axios.post("/api/register", userJson);
-
+      const response = await axios.post("/api/register", userJson, {
+        headers: {
+          "X-API-KEY": "user",
+          "Content-Type": "application/json"
+        }
+      });
       console.log("Register Successful:", response.data);
       setLoggedIn(true)
       navigate('/home');
