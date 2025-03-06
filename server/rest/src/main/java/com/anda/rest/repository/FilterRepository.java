@@ -10,6 +10,6 @@ import java.util.List;
 
 
 public interface FilterRepository extends JpaRepository <Filter, String> {
-    @Query("SELECT filters FROM Filter filters WHERE filters.username = :username")
+    @Query("SELECT user_preferences FROM Filter user_preferences WHERE user_preferences.username = :username")
     List<Filter> findFiltersByUsername(@Param("username") String username);
 }
