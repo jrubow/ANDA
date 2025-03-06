@@ -33,27 +33,6 @@ function RegisterPage() {
 
   async function register(e) {
     e.preventDefault();
-    let userJson = {
-      username: formData.username,
-      password: formData.password,
-      email: formData.email,
-      first_name: formData.first_name,
-      last_name: formData.last_name,
-      address: formData.address,
-      phone_number: formData.phone_number,
-<<<<<<< HEAD
-      share_location: 0,
-    };
-
-    if (admin) {
-      userJson.agency_id = parseInt(formData.agency_id);
-    }
-
-    try {
-      const response = await axios.post("/api/register", userJson);
-=======
-      share_location: true
-    })
     try {
       var userJson = {}
       if (admin) {
@@ -87,7 +66,6 @@ function RegisterPage() {
           "Content-Type": "application/json"
         }
       });
->>>>>>> 551f42ded33dd6f7fb0fa7e3155c447014dbb3d5
       console.log("Register Successful:", response.data);
       setLoggedIn(true);
       navigate("/home");
