@@ -20,7 +20,10 @@ function HomePage() {
     windspeed: [],
   });
 
-  // State to track if the Google Maps API has loaded
+  // New state to control the visibility of ESP32 device markers
+  const [showESP32Devices, setShowESP32Devices] = useState(false);
+
+  // State to track if the Google Maps API has loaded and the map instance
   const [mapApiLoaded, setMapApiLoaded] = useState(false);
   const [map, setMap] = useState(null);
 
@@ -30,7 +33,6 @@ function HomePage() {
   // Other state and context
   const { user, setUser, loggedIn, setLoggedIn, isGuest } = useContext(UserContext);
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
 
   // Map configuration
   const center = { lat: 40.4246, lng: -86.9081 };
@@ -41,7 +43,7 @@ function HomePage() {
     height: "100vh",
   };
 
-  // ESP32 Marker Component with InfoWindow (displays info when clicked)
+  // ESP32 Marker Component with InfoWindow
   const ESP32Marker = ({ lat, lng, device, isSentinel }) => {
     const [infoOpen, setInfoOpen] = useState(false);
     return (
@@ -144,7 +146,7 @@ function HomePage() {
     });
   }, [weatherFilters, heatmapData, map]);
 
-  // Get user's current location if user.shareLocation is true
+  // Get user's current location if allowed
   useEffect(() => {
     if (user.shareLocation && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -154,9 +156,7 @@ function HomePage() {
             lng: position.coords.longitude,
           });
         },
-        (error) => {
-          console.error("Error getting user's location:", error);
-        }
+        (error) => console.error("Error getting user's location:", error)
       );
     }
   }, [user.shareLocation]);
@@ -182,7 +182,7 @@ function HomePage() {
       .catch((err) => console.error("Error loading ESP32 locations:", err));
   }, []);
 
-  // Function to load weather data from a text file
+  // Function to load weather data from text files
   const loadWeatherData = (file, key) => {
     fetch(file)
       .then((res) => {
@@ -254,7 +254,7 @@ function HomePage() {
     }));
   };
 
-  // (Optional) Compute legend data based on active filters
+  // Compute legend data for each active weather filter
   const getMinMax = (data) => {
     if (!data || data.length === 0) return { min: 0, max: 0 };
     const values = data.map((point) => point.weight);
@@ -264,7 +264,6 @@ function HomePage() {
     };
   };
 
-  // Create legend data for each active filter (legend items for active weather types)
   const legendData = Object.keys(weatherFilters)
     .filter((key) => weatherFilters[key])
     .map((key) => ({
@@ -346,8 +345,7 @@ function HomePage() {
               zoomControl: true,
             }}
           >
-            
-            {/* User's location marker with blue circle symbol (Apple Maps–like) */}
+            {/* User's location marker */}
             {user.shareLocation && mapApiLoaded && userLocation && (
               <Marker
                 position={userLocation}
@@ -361,9 +359,9 @@ function HomePage() {
                 }}
               />
             )}
-            {/* ESP32 device markers using custom ESP32Marker component */}
-            <>
-              {devices.map((device) => (
+            {/* Render ESP32 device markers when toggled on */}
+            {showESP32Devices &&
+              devices.map((device) => (
                 <ESP32Marker
                   key={device.device}
                   lat={device.lat}
@@ -372,18 +370,16 @@ function HomePage() {
                   isSentinel={device.isSentinel}
                 />
               ))}
-            </>
-            {/* Note: Heatmap layers are managed manually via useEffect */}
+            {/* Note: Weather heatmap layers are managed via useEffect */}
           </GoogleMap>
         </LoadScript>
       </div>
 
-      {/* Dynamic Legend */}
+      {/* Dynamic Legend for Active Weather Filters */}
       {legendData.length > 0 && (
         <div className="legend">
           {legendData.map(({ type, min, max }) => (
             <div key={type} className="legend-item">
-              {/* The gradient-box background is set inline to correspond to the event's gradient */}
               <div
                 className="gradient-box"
                 style={{
@@ -400,13 +396,13 @@ function HomePage() {
         </div>
       )}
 
-      {/* Weather Filters Popup */}
+      {/* Map Layers Popup */}
       {showFiltersPopup && (
         <>
           <div className="popup-overlay" onClick={() => setShowFiltersPopup(false)}></div>
           <div className="filters-popup">
             <div className="filters-popup-content">
-              <h2 className="filters-title">Weather Filters</h2>
+              <h2 className="filters-title">Map Layers</h2>
               <div className="filter-row">
                 <input
                   type="checkbox"
@@ -442,6 +438,15 @@ function HomePage() {
                   onChange={handleWeatherFilterChange}
                 />
                 <label>Humidity</label>
+              </div>
+              <div className="filter-row">
+                <input
+                  type="checkbox"
+                  name="esp32"
+                  checked={showESP32Devices}
+                  onChange={(e) => setShowESP32Devices(e.target.checked)}
+                />
+                <label>ESP32 Devices</label>
               </div>
               <button className="close-btn" onClick={() => setShowFiltersPopup(false)}>
                 Close

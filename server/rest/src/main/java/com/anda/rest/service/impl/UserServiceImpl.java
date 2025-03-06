@@ -4,6 +4,7 @@ import com.anda.rest.model.Admin;
 import com.anda.rest.model.User;
 import com.anda.rest.repository.UserRepository;
 import com.anda.rest.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -127,6 +128,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public boolean deleteUser(String username, String password) {
         User user = checkUserCredentials(username, password);
         if (user != null) {
