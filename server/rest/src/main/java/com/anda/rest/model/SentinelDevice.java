@@ -21,7 +21,7 @@ public class SentinelDevice extends Device {
     // Additional fields specific to SentinelDevice
     private int num_connected_devices;
     private String password;
-    private String admin_username;
+    private int agency_id;
 
     // Default constructor
     public SentinelDevice() {}
@@ -41,7 +41,7 @@ public class SentinelDevice extends Device {
         super(sensor_id, latitude, longitude, battery_life, last_online, deployed_date, deployed);
         this.num_connected_devices = num_connected_devices;
         this.password = generatePassword(8);
-        this.admin_username = null;
+        this.agency_id = 0;
     }
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
@@ -74,11 +74,12 @@ public class SentinelDevice extends Device {
         this.password = password;
     }
 
-    public String getAdminUsername() {
-        return this.admin_username;
+    public int getAgencyId() {
+        return this.agency_id;
     }
 
-    public void setAdminUsername(String adminUsername) {
-        this.admin_username = adminUsername;
+    public void setAgencyId(int agencyId) {
+        System.out.println(agencyId);
+        this.agency_id = agencyId;
     }
 }

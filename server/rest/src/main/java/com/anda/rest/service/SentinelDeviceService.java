@@ -14,5 +14,5 @@ import java.util.Map;
     public String deleteSentinelDevice(int id);
     public SentinelDevice getSentinelDevice(int id);
     public List<SentinelDevice> getAllSentinelDevices();
-    public boolean claimSentinelDevice(int id, String password, String username);
+    public boolean claimSentinelDevice(int id, String password, int agency_id);
 }

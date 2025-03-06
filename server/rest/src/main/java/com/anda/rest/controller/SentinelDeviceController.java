@@ -21,8 +21,6 @@ public class SentinelDeviceController {
 
     SentinelDeviceService sentinelDeviceService;
 
-    
-
     public SentinelDeviceController(SentinelDeviceService sentinelDeviceService) {
         this.sentinelDeviceService = sentinelDeviceService;
     }
@@ -51,16 +49,17 @@ public class SentinelDeviceController {
         }
     }
 
-    @PutMapping("/claim")
+    @PostMapping("/claim")
     public ResponseEntity<String> claimSentinelDevice(@RequestBody Map<String, Object> body) {
         try {
             System.out.println(body.get("device_id"));
             System.out.println(body.get("password"));
-            System.out.println(body.get("username"));
-            boolean isClaimed = sentinelDeviceService.claimSentinelDevice((Integer) body.get("device_id"), (String) body.get("password"), (String) body.get("username"));
+            System.out.println((int) body.get("agency_id"));
+            System.out.println((Integer) body.get("agency_id"));
+            boolean isClaimed = sentinelDeviceService.claimSentinelDevice((Integer) body.get("device_id"), (String) body.get("password"), (int) body.get("agency_id"));
             return isClaimed ? ResponseEntity.ok("SENTINEL DEVICE " + body.get("device_id") + " CLAIMED") : ResponseEntity.status(400).body("SENTINEL DEVICE NOT FOUND");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+            return ResponseEntity.status(400).body("INCORRECT PASSWORD OR DEVICE ID");
         }
     }
 

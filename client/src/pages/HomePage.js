@@ -28,7 +28,7 @@ function HomePage() {
   const [userLocation, setUserLocation] = useState(null);
 
   // Other state and context
-  const { user, setUser, loggedIn, setLoggedIn } = useContext(UserContext);
+  const { user, setUser, loggedIn, setLoggedIn, isGuest } = useContext(UserContext);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -282,9 +282,9 @@ function HomePage() {
         </div>
         <nav>
           <ul>
-            <li>
+            {!isGuest ? <li>
               <Link to="/report">Make a Report</Link>
-            </li>
+            </li> : ""}
             <li>
               <Link to="/navigate">Navigate</Link>
             </li>
@@ -293,16 +293,35 @@ function HomePage() {
                 Map Layers
               </button>
             </li>
+            {user.agency_id != null ? 
+              <>
+                <li>
+                  <Link to="/devices/register">Register Device</Link>
+                </li>
+                <li>
+                  <Link to="/devices">View Devices</Link>
+                </li>
+              </>
+              : ""  
+            }
           </ul>
         </nav>
         <div className="bottom-menu">
           <ul>
-            <Link to="/settings">
-              <button className="button">Account</button>
-            </Link>
-            <button className="button" onClick={logout}>
-              Log Out
-            </button>
+            {!isGuest ? 
+              <>
+                <Link to="/settings">
+                  <button className="button">Account</button>
+                </Link>
+                <button className="button" onClick={logout}>
+                  Log Out
+                </button>
+              </>
+            : 
+              <Link to="/login">
+                <button className="button">Login</button>
+              </Link>
+            }
           </ul>
         </div>
       </div>

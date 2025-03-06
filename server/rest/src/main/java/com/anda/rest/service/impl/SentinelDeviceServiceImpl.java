@@ -98,13 +98,14 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
     }
 
     @Override
-    public boolean claimSentinelDevice(int id, String password, String username) {
+    public boolean claimSentinelDevice(int id, String password, int agency_id) {
+        System.out.println(agency_id);
         SentinelDevice device = sentinelDeviceRepository.findById(id).orElse(null);
-        if (device == null || device.getPassword() == null || device.getAdminUsername() != null || !device.getPassword().equals(password)) {
+        if (device == null || device.getPassword() == null || device.getAgencyId() != 0 || !device.getPassword().equals(password)) {
             return false;
         }
 
-        device.setAdminUsername(username);
+        device.setAgencyId(agency_id);
         try {
             sentinelDeviceRepository.save(device);
             return true;

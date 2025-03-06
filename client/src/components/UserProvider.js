@@ -5,8 +5,8 @@ export const UserContext = createContext(null);
 const UserProvider = ({ children }) => {
   const storedUser = localStorage.getItem("user");
   const storedLoggedIn = localStorage.getItem("loggedIn");
+  const storedIsGuest = localStorage.getItem("isGuest");
 
-  // If agency_id is null then this is a normal user otherwise it is an admin
   const [user, setUser] = useState(storedUser ? JSON.parse(storedUser) : {
     username: "",
     first_name: "",
@@ -20,6 +20,7 @@ const UserProvider = ({ children }) => {
   });
 
   const [loggedIn, setLoggedIn] = useState(storedLoggedIn === "true");
+  const [isGuest, setIsGuest] = useState(storedIsGuest === "true");
 
   useEffect(() => {
     localStorage.setItem("user", JSON.stringify(user));
@@ -29,8 +30,12 @@ const UserProvider = ({ children }) => {
     localStorage.setItem("loggedIn", loggedIn);
   }, [loggedIn]);
 
+  useEffect(() => {
+    localStorage.setItem("isGuest", isGuest);
+  }, [isGuest]);
+
   return (
-    <UserContext.Provider value={{ user, setUser, loggedIn, setLoggedIn }}>
+    <UserContext.Provider value={{ user, setUser, loggedIn, setLoggedIn, isGuest, setIsGuest }}>
       {children}
     </UserContext.Provider>
   );
