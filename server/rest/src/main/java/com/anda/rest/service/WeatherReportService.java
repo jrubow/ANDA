@@ -11,4 +11,5 @@ public interface WeatherReportService {
     public String deleteWeatherReport(int report_id);
     public WeatherReport getWeatherReport(int report_id);
     public List<WeatherReport> getAllWeatherReports();
+    public List<WeatherReport> getAllWeatherReportsByReport_type(String report_type);
 }

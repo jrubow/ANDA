@@ -1,26 +1,26 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext } from "react";
 import "../css/pages/registerpage.css";
-import axios from "axios"
-import {useNavigate, Link} from "react-router-dom"
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from "../components/UserProvider";
 
 function RegisterPage() {
   const navigate = useNavigate();
-  const {user, setUser, loggedIn, setLoggedIn} = useContext(UserContext)
-  const [admin, setAdmin] = useState(false)
+  const { setLoggedIn } = useContext(UserContext);
+  const [admin, setAdmin] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // Store error message
+  const [showPopup, setShowPopup] = useState(false); // Control popup visibility
 
   const [formData, setFormData] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-    password: '',
-    confirmPassword: '',
-    agency_id:  '',
-  });
-
-  const [errors, setErrors] = useState({
-    password: false,
-    confirmPassword: false,
+    username: "",
+    email: "",
+    first_name: "",
+    last_name: "",
+    address: "",
+    phone_number: "",
+    password: "",
+    confirmPassword: "",
+    agency_id: "",
   });
 
   const handleChange = (e) => {
@@ -32,17 +32,7 @@ function RegisterPage() {
   };
 
   async function register(e) {
-    e.preventDefault(); 
-    console.log({
-      username: formData.username,
-      password: formData.password,
-      email: formData.email,
-      first_name: formData.first_name,
-      last_name: formData.first_name,
-      address: formData.address,
-      phone_number: formData.phone_number,
-      share_location: true
-    })
+    e.preventDefault();
     try {
       var userJson = {}
       if (admin) {
@@ -70,32 +60,25 @@ function RegisterPage() {
         }
       }
       console.log(userJson)
-      const response = await axios.post("/api/register", userJson);
-
+      const response = await axios.post("/api/register", userJson, {
+        headers: {
+          "X-API-KEY": "user",
+          "Content-Type": "application/json"
+        }
+      });
       console.log("Register Successful:", response.data);
-      setLoggedIn(true)
-      navigate('/home');
+      setLoggedIn(true);
+      navigate("/home");
     } catch (error) {
-      console.error("Register Failed:", error.response.data);
-      if (error.response.data == "USER ALREADY EXISTS") {
-        alert("Username already exists")
-      } else if (error.response.data == "MAXIMUM PASSWORD ATTEMPTS REACHED") {
-        alert("Maximum password attempts reached. Reset your password.")
+      if (error.response) {
+        setErrorMessage(error.response.data); // Store error message from backend
+        setShowPopup(true); // Show popup
+      } else {
+        setErrorMessage("Server error. Please try again.");
+        setShowPopup(true);
       }
     }
   }
-
-  const validatePassword = () => {
-    const passwordValid =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-        formData.password
-      );
-    const confirmPasswordMatch = formData.password === formData.confirmPassword;
-    setErrors({
-      password: !passwordValid,
-      confirmPassword: !confirmPasswordMatch,
-    });
-  };
 
   return (
     <div className="register-container">
@@ -106,121 +89,63 @@ function RegisterPage() {
         <h2>Sign Up</h2>
 
         <label>Username</label>
-        <input
-          type="username"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          required
-        />
+        <input type="text" name="username" value={formData.username} onChange={handleChange} required />
 
         <label>Email</label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
+        <input type="email" name="email" value={formData.email} onChange={handleChange} required />
 
         <label>First Name</label>
-        <input
-          type="text"
-          name="first_name"
-          value={formData.first_name}
-          onChange={handleChange}
-          required
-        />
+        <input type="text" name="first_name" value={formData.first_name} onChange={handleChange} required />
 
         <label>Last Name</label>
-        <input
-          type="text"
-          name="last_name"
-          value={formData.last_name}
-          onChange={handleChange}
-          required
-        />
+        <input type="text" name="last_name" value={formData.last_name} onChange={handleChange} required />
 
         <label>Address</label>
-        <input
-          type="text"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          required
-        />
+        <input type="text" name="address" value={formData.address} onChange={handleChange} required />
 
         <label>Phone Number</label>
-        <input
-          type="text"
-          name="phone_number"
-          value={formData.phone_number}
-          onChange={handleChange}
-          required
-        />
+        <input type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} required />
 
-        {
-          admin ? 
+        {admin && (
           <>
-          <label>Agency Id</label>
-          <input
-            type="number"
-            name="agency_id"
-            value={formData.agency_id}
-            onChange={handleChange}
-            required
-          />
+            <label>Agency ID</label>
+            <input type="number" name="agency_id" value={formData.agency_id} onChange={handleChange} required />
           </>
-          :
-          ""
-        }
+        )}
 
         <label>Password</label>
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          onBlur={validatePassword}
-          required
-        />
-        {errors.password && (
-          <p className="error-text">Password must contain at least 8 characters, 1 lowercase, 1 uppercase, 1 number, and 1 special character.</p>
-        )}
+        <input type="password" name="password" value={formData.password} onChange={handleChange} required />
 
         <label>Confirm Password</label>
-        <input
-          type="password"
-          name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          onBlur={validatePassword}
-          required
-        />
-        {errors.confirmPassword && (
-          <p className="error-text">Passwords do not match.</p>
-        )}
+        <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
 
-        <div className="password-requirements">
-          <ul>
-            <li>8 characters minimum</li>
-            <li>1 lowercase letter</li>
-            <li>1 uppercase letter</li>
-            <li>1 number</li>
-            <li>1 special character</li>
-          </ul>
-        </div>
+        <button type="submit" className="button" onClick={register}>
+          Create Account
+        </button>
 
-        <button type="submit" className="button" onClick={register}>Create Account</button>
-
-        {/* Links */}
         <div className="links">
-          <Link to="/login">Login</Link > | {admin ? <a href="#" onClick={() => setAdmin(false)}>General User?</a>  : <a href="#" onClick={() => setAdmin(true)}>Administrator?</a>}
+          <Link to="/login">Login</Link> |{" "}
+          <a href="#" onClick={() => setAdmin(!admin)}>
+            {admin ? "General User?" : "Administrator?"}
+          </a>
         </div>
+
         <div className="terms">
           <a href="#">Terms</a> | <a href="#">Privacy Policy</a>
         </div>
       </form>
+
+      {/* Popup Modal */}
+      {showPopup && (
+        <div className="popup">
+          <div className="popup-content">
+            <span className="close-btn" onClick={() => setShowPopup(false)}>
+              &times;
+            </span>
+            <p>{errorMessage}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

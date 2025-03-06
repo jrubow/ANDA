@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 // import java.security.SecureRandom;
 import java.util.List;
 // import java.util.Map;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -30,16 +31,30 @@ public class ReportController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> initalizeReport(@RequestBody Report report) {
+    public ResponseEntity<String> initalizeReport(Authentication authentication, @RequestBody Report report) {
         System.out.println(report.getReportType());
-        boolean isCreated = reportService.createReport(report);
-        return isCreated ? ResponseEntity.ok("REPORT CREATED") : ResponseEntity.status(400).body("REPORT ALREADY EXISTS");
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"))) {
+            boolean isCreated = reportService.createReport(report);
+            return isCreated ? ResponseEntity.ok("REPORT CREATED") : ResponseEntity.status(400).body("REPORT ALREADY EXISTS");
+        }
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
+        return ResponseEntity.status(403).body("Access Denied");
+//        boolean isCreated = reportService.createReport(report);
+//        return isCreated ? ResponseEntity.ok("REPORT CREATED") : ResponseEntity.status(400).body("REPORT ALREADY EXISTS");
     }
 
     @GetMapping("/device")
-    public ResponseEntity<?> getReportByDevice(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> getReportByDevice(Authentication authentication, @RequestBody Map<String, Object> body) {
         try {
             // Extract deviceId from the request body
+            if (authentication != null && authentication.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+                return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+            }
             Integer deviceId = (Integer) body.get("deviceId");
             if (deviceId == null) {
                 return ResponseEntity.badRequest()

@@ -10,7 +10,7 @@ function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(""); // Store error message
-  const { user, setUser, loggedIn, setLoggedIn } = useContext(UserContext);
+  const { user, setUser, loggedIn, setLoggedIn, isGuest, setIsGuest } = useContext(UserContext);
   const navigate = useNavigate();
 
   async function login(e) {
@@ -22,7 +22,14 @@ function LoginPage() {
       const response = await axios.post("/api/login", {
         username: username,
         password: password,
-      });
+      },
+      {
+        headers: {
+          "X-API-KEY": "user",
+              "Content-Type": "application/json"
+        }
+      }
+    );
 
       console.log("Login Successful:", response.data);
       setLoggedIn(true);
@@ -37,8 +44,8 @@ function LoginPage() {
         share_location: response.data.share_location,
         agency_id: response.data.agency_id === undefined ? null : response.data.agency_id,
       });
-
-      navigate("/home");
+      setIsGuest(false)
+      navigate("/home")
     } catch (error) {
       console.error("Login Failed:", error.response ? error.response.data : error.message);
       setErrorMessage(error.response.data); // Show error message
@@ -51,10 +58,17 @@ function LoginPage() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("/api/login-guest", { guest: true });
+      const response = await axios.post("/api/login-guest", {}, {
+        headers: {
+          "X-API-KEY": "guest",
+          "Content-Type": "application/json"
+        }
+      });
 
       console.log("Guest Login Successful:", response.data);
       // Handle guest login
+      setIsGuest(true)
+      navigate("/home")
     } catch (error) {
       console.error("Guest Login Failed:", error.response ? error.response.data : error.message);
     }
