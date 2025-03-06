@@ -41,6 +41,7 @@ function RegisterPage() {
       last_name: formData.last_name,
       address: formData.address,
       phone_number: formData.phone_number,
+<<<<<<< HEAD
       share_location: 0,
     };
 
@@ -50,6 +51,43 @@ function RegisterPage() {
 
     try {
       const response = await axios.post("/api/register", userJson);
+=======
+      share_location: true
+    })
+    try {
+      var userJson = {}
+      if (admin) {
+        userJson = {
+          username: formData.username,
+          password: formData.password,
+          email: formData.email,
+          first_name: formData.first_name,
+          last_name: formData.first_name,
+          address: formData.address,
+          phone_number: formData.phone_number,
+          share_location: 0,
+          agency_id: parseInt(formData.agency_id)
+        }
+      } else {
+        userJson = {
+          username: formData.username,
+          password: formData.password,
+          email: formData.email,
+          first_name: formData.first_name,
+          last_name: formData.first_name,
+          address: formData.address,
+          phone_number: formData.phone_number,
+          share_location: 0
+        }
+      }
+      console.log(userJson)
+      const response = await axios.post("/api/register", userJson, {
+        headers: {
+          "X-API-KEY": "user",
+          "Content-Type": "application/json"
+        }
+      });
+>>>>>>> 551f42ded33dd6f7fb0fa7e3155c447014dbb3d5
       console.log("Register Successful:", response.data);
       setLoggedIn(true);
       navigate("/home");

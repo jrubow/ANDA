@@ -1,7 +1,7 @@
 package com.anda.rest.controller;
 
-import com.anda.rest.model.Report;
-import com.anda.rest.service.ReportService;
+import com.anda.rest.model.Filter;
+import com.anda.rest.service.FilterService;
 
 import java.util.Map;
 
@@ -19,58 +19,55 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @RestController
-@RequestMapping("/api/reports")
-public class ReportController {
+@RequestMapping("/api/filter")
+public class FilterController {
 
-    ReportService reportService;
+    FilterService filterService;
 
-    
 
-    public ReportController(ReportService reportService) {
-        this.reportService = reportService;
+
+    public FilterController(FilterService filterService) {
+        this.filterService = filterService;
     }
-
+    
     @PostMapping("/create")
-    public ResponseEntity<String> initalizeReport(Authentication authentication, @RequestBody Report report) {
-        System.out.println(report.getReportType());
+    public ResponseEntity<String> createFilterAccess(Authentication authentication, @RequestBody Filter filter) {
         if (authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"))) {
-            boolean isCreated = reportService.createReport(report);
-            return isCreated ? ResponseEntity.ok("REPORT CREATED") : ResponseEntity.status(400).body("REPORT ALREADY EXISTS");
+            boolean isCreated = filterService.createFilter(filter);
+            return isCreated ? ResponseEntity.ok("FILTER CREATED") : ResponseEntity.status(400).body("FILTER ALREADY EXISTS");
         }
         if (authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
             return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
         }
         return ResponseEntity.status(403).body("Access Denied");
-//        boolean isCreated = reportService.createReport(report);
-//        return isCreated ? ResponseEntity.ok("REPORT CREATED") : ResponseEntity.status(400).body("REPORT ALREADY EXISTS");
     }
 
-    @GetMapping("/device")
-    public ResponseEntity<?> getReportByDevice(Authentication authentication, @RequestBody Map<String, Object> body) {
+    @GetMapping("/username")
+    public ResponseEntity<?> getFilterByUsername(Authentication authentication, @RequestBody Map<String, Object> body) {
         try {
             // Extract deviceId from the request body
             if (authentication != null && authentication.getAuthorities().stream()
                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
                 return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
             }
-            Integer deviceId = (Integer) body.get("deviceId");
-            if (deviceId == null) {
+            String username = (String) body.get("username");
+            if (username == null) {
                 return ResponseEntity.badRequest()
-                    .body("ERROR : device_id SHOULD NOT BE NULL");
+                        .body("ERROR : username SHOULD NOT BE NULL");
             }
 
-            // Retrieve reports using the deviceId
-            List<Report> reports = reportService.getReportByDevice(deviceId);
+            // Retrieve filters using the username
+            List<Filter> filters = filterService.getFiltersByUsername(username);
 
             // Spring Boot will automatically convert the List<Report> to JSON
-            return ResponseEntity.ok(reports);
+            return ResponseEntity.ok(filters);
         } catch (Exception e) {
             // Return a JSON formatted error message in case of exception
             return ResponseEntity.status(500)
-                .body("ERROR : COULD NOT RETRIEVE DEVICE");
+                    .body("ERROR : COULD NOT RETRIEVE USER'S FILTER");
         }
     }
-    
+
 }

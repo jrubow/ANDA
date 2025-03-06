@@ -15,4 +15,5 @@ public interface UserService {
     boolean registerUser(User user);
     public boolean updateUserDetails(Map<String, Object> updates);
     public boolean existsByUsername(String username);
+    public boolean deleteUser(String username, String password);
 }

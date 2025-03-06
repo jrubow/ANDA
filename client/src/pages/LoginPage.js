@@ -22,7 +22,14 @@ function LoginPage() {
       const response = await axios.post("/api/login", {
         username: username,
         password: password,
-      });
+      },
+      {
+        headers: {
+          "X-API-KEY": "user",
+              "Content-Type": "application/json"
+        }
+      }
+    );
 
       console.log("Login Successful:", response.data);
       setLoggedIn(true);
@@ -51,10 +58,16 @@ function LoginPage() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("/api/login-guest", { guest: true });
+      const response = await axios.post("/api/login-guest", {}, {
+        headers: {
+          "X-API-KEY": "guest",
+          "Content-Type": "application/json"
+        }
+      });
 
       console.log("Guest Login Successful:", response.data);
       // Handle guest login
+      navigate("/guest");
     } catch (error) {
       console.error("Guest Login Failed:", error.response ? error.response.data : error.message);
     }

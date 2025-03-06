@@ -1,15 +1,16 @@
 package com.anda.rest.controller;
 
-import com.anda.rest.model.AccountFields;
-import com.anda.rest.model.Admin;
-import com.anda.rest.model.LoginRequest;
-import com.anda.rest.model.User;
+import com.anda.rest.model.*;
+import com.anda.rest.service.AgencyService;
+import com.anda.rest.service.EmailService;
 import com.anda.rest.service.UserService;
 import com.anda.rest.service.AdminService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -23,10 +24,26 @@ public class AccountController {
 
     private final UserService userService;
     private final AdminService adminService;
+    private final EmailService emailService;
+    private final AgencyService agencyService;
 
-    public AccountController(UserService userService, AdminService adminService) {
+    public AccountController(UserService userService, AdminService adminService, EmailService emailService, AgencyService agencyService) {
         this.userService = userService;
         this.adminService = adminService;
+        this.emailService = emailService;
+        this.agencyService = agencyService;
+    }
+
+    @GetMapping("/login-guest")
+    public ResponseEntity<String> showGuestMessage() { return ResponseEntity.ok("ANDA Guest Page"); }
+
+    @PostMapping("/login-guest")
+    public ResponseEntity<?> guest(Authentication authentication) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.ok().body("Welcome, Guest!");
+        }
+        return ResponseEntity.status(403).body("Access Denied");
     }
 
     @GetMapping("/login")
@@ -35,7 +52,11 @@ public class AccountController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(Authentication authentication, @RequestBody LoginRequest loginRequest) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
         User user = userService.checkUserCredentials(loginRequest.getUsername(), loginRequest.getPassword());
         if (user == null) {
             Admin admin = adminService.checkAdminCredentials(loginRequest.getUsername(), loginRequest.getPassword());
@@ -50,6 +71,10 @@ public class AccountController {
 
             if (admin.getLogin_attempts() > 5) {
                 return ResponseEntity.status(401).body("MAXIMUM PASSWORD ATTEMPTS REACHED");
+            }
+
+            if (!admin.isVerified()) {
+                return ResponseEntity.status(401).body("ADMIN NOT YET VERIFIED");
             }
 
             admin.setPassword(null);
@@ -83,6 +108,11 @@ public class AccountController {
         }
 
         if (acc.getAgency_id() != null) {
+
+            if (!agencyService.existsById(acc.getAgency_id())) {
+                return ResponseEntity.status(400).body("AGENCY DOES NOT EXIST");
+            }
+
             Admin admin = new Admin();
             admin.setUsername(acc.getUsername());
             admin.setPassword(acc.getPassword());
@@ -95,6 +125,32 @@ public class AccountController {
             admin.setAgency_id(acc.getAgency_id());
 
             boolean isCreated = adminService.registerAdmin(admin);
+
+            if (isCreated)  {
+                Agency agency = agencyService.getAgency(admin.getAgency_id());
+                LocalDateTime now = LocalDateTime.now();
+                emailService.sendEmail(agency.getEmail(), "ANDA: Verify New Agency Admin Account",
+                        "### TEST ### TEST ### TEST ### TEST ###\n\n" +
+                                "This is an automatic message from ANDA system.\n" +
+                                "A new admin has just registered with " + agency.getName() + ".\n\n" +
+                                "Name: " + admin.getLast_name() + ", " + admin.getFirst_name() + "\n" +
+                                "Username: " + admin.getUsername() + "\n" +
+                                "Email: " + admin.getEmail() + "\n" +
+                                "Phone number: " + admin.getPhone_number() + "\n\n" +
+                                "To verify this admin, follow the link below\n" +
+                                "http://localhost:8080/api/verify/" + admin.getUsername() + "\n\n\n" +
+                                "Generated: " + now);
+                emailService.sendEmail(admin.getEmail(), "ANDA: Registration confirmation",
+                        "### TEST ### TEST ### TEST ### TEST ###\n\n" +
+                                "This is an automatic message from ANDA system.\n" +
+                                admin.getFirst_name() + ", you have successfully signed up as an admin for " + agency.getName() + ".\n\n" +
+                                "A verification email has been sent to your agency. Once a representative verifies your account, " +
+                                "you will get a confirmation email. At that point, you will have access to your account.\n\n" +
+                                "Contact your agency with any questions.\n\n" +
+                                "Generated: " + now);
+            }
+
+
             return isCreated ? ResponseEntity.ok("ADMIN REGISTERED")
                     : ResponseEntity.status(400).body("ADMIN ALREADY EXISTS");
         } else {
@@ -109,17 +165,56 @@ public class AccountController {
             user.setLast_name(acc.getLast_name());
 
             boolean isCreated = userService.registerUser(user);
+
+            if (isCreated) {
+                LocalDateTime now = LocalDateTime.now();
+                emailService.sendEmail(user.getEmail(), "ANDA: Registration confirmation",
+                        "### TEST ### TEST ### TEST ### TEST ###\n\n" +
+                                "This is an automatic message from ANDA system.\n\n" +
+                                user.getFirst_name() + ", thank you for registering with ANDA." +
+                                "We are happy to have you with us!\n\n" +
+                                "Generated" + now);
+
+            }
+
             return isCreated ? ResponseEntity.ok("USER REGISTERED")
                     : ResponseEntity.status(400).body("USER ALREADY EXISTS");
         }
     }
 
+    @GetMapping("/verify/{username}")
+    public ResponseEntity<String> verifyAdmin(Authentication authentication, @PathVariable String username) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
+        boolean isVerified = adminService.verifyAdmin(username);
+        if (isVerified) {
+            Admin admin = adminService.getByUsername(username);
+            LocalDateTime now = LocalDateTime.now();
+            emailService.sendEmail(admin.getEmail(), "ANDA: Verification confirmation",
+                    "### TEST ### TEST ### TEST ### TEST ###\n\n" +
+                            "This is an automatic message from ANDA system.\n\n" +
+                            admin.getFirst_name() + ", you have been verified by your agency. " +
+                            "You now have access to you account!\n\n" +
+                            "Generated" + now);
+            return ResponseEntity.ok("ANDA: Admin " + admin.getLast_name() + ", " + admin.getFirst_name() +
+                    " at agency " + admin.getAgency_id() + " verified successfully!");
+        } else {
+            return ResponseEntity.status(400).body("ADMIN NOT FOUND OR IS ALREADY VERIFIED");
+        }
+    }
+
     @PostMapping("/update")
-    public ResponseEntity<String> updateAccount(@RequestBody Map<String, Object> updates) {
+    public ResponseEntity<String> updateAccount(Authentication authentication, @RequestBody Map<String, Object> updates) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
         try {
             String username = (String) updates.get("username");
             if (username == null) {
-                return ResponseEntity.status(400).body("Username is required for updating account details.");
+                return ResponseEntity.status(400).body("USERNAME REQUIRED FOR UPDATING ACCOUNT");
             }
 
             boolean isUpdated = false;
@@ -134,6 +229,25 @@ public class AccountController {
                     : ResponseEntity.status(404).body("ACCOUNT NOT FOUND");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteAccount(Authentication authentication, @RequestBody LoginRequest request) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+        }
+        boolean isDeleted = userService.deleteUser(request.getUsername(), request.getPassword());
+        if (!isDeleted) {
+            isDeleted = adminService.deleteAdmin(request.getUsername(), request.getPassword());
+            if (isDeleted) {
+                return ResponseEntity.ok("ADMIN ACCOUNT DELETED SUCCESSFULLY");
+            }
+            return ResponseEntity.status(400).body("INVALID CREDENTIALS OR USERNAME NOT FOUND");
+        }
+        else {
+            return ResponseEntity.ok("USER ACCOUNT DELETED SUCCESSFULLY");
         }
     }
 }

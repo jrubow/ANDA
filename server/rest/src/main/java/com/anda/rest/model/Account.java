@@ -35,6 +35,8 @@ public abstract class Account {
     }
 
     public Account(String username, int loginAttempts) {
+        this.username = username;
+        this.login_attempts = loginAttempts;
     }
 
     public Account() {

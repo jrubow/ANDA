@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import UserProvider from "./components/UserProvider"
 import HomePage from "./pages/HomePage"
+import GuestPage from "./pages/GuestPage"
 import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
 import SettingsPage from "./pages/SettingsPage"
@@ -15,6 +16,7 @@ function App() {
         <div className="content-body">
           <Routes>
             <Route path="/home" element={<HomePage />} />
+            <Route path="/guest" element={<GuestPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/settings" element={<SettingsPage />} />
