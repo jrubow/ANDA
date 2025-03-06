@@ -5,12 +5,14 @@ import com.anda.rest.service.AgencyService;
 import com.anda.rest.service.EmailService;
 import com.anda.rest.service.UserService;
 import com.anda.rest.service.AdminService;
+import com.anda.rest.service.FilterService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,15 +25,17 @@ import java.util.Map;
 public class AccountController {
 
     private final UserService userService;
+    private final FilterService filterService;
     private final AdminService adminService;
     private final EmailService emailService;
     private final AgencyService agencyService;
 
-    public AccountController(UserService userService, AdminService adminService, EmailService emailService, AgencyService agencyService) {
+    public AccountController(UserService userService, AdminService adminService, EmailService emailService, AgencyService agencyService, FilterService filterService) {
         this.userService = userService;
         this.adminService = adminService;
         this.emailService = emailService;
         this.agencyService = agencyService;
+        this.filterService = filterService;
     }
 
     @GetMapping("/login-guest")
@@ -248,6 +252,37 @@ public class AccountController {
         }
         else {
             return ResponseEntity.ok("USER ACCOUNT DELETED SUCCESSFULLY");
+        }
+    }
+
+    @GetMapping("/filter/username")
+    public ResponseEntity<?> getFilterByUsername(Authentication authentication, @RequestBody User user) {
+        try {
+            // Extract deviceId from the request body
+            if (authentication != null && authentication.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
+                return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
+            }
+            String username = user.getUsername();
+            System.out.println(username);
+            if (username == null) {
+                return ResponseEntity.badRequest()
+                        .body("ERROR : username SHOULD NOT BE NULL");
+            }
+            // Retrieve filters using the username
+            List<Filter> filters = filterService.getFiltersByUsername(username);
+
+            if (filters == null || filters.size() == 0) {
+                return ResponseEntity.badRequest()
+                        .body("ERROR : user has no filters");
+            }
+
+            // Spring Boot will automatically convert the List<Report> to JSON
+            return ResponseEntity.ok(filters);
+        } catch (Exception e) {
+            // Return a JSON formatted error message in case of exception
+            return ResponseEntity.status(500)
+                    .body("ERROR : COULD NOT RETRIEVE USER'S FILTER");
         }
     }
 }
