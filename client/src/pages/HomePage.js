@@ -23,15 +23,18 @@ function HomePage() {
   // New state to control the visibility of ESP32 device markers
   const [showESP32Devices, setShowESP32Devices] = useState(false);
 
+  // New state to control whether the user's location should be displayed
+  const [showUserLocation, setShowUserLocation] = useState(false);
+
   // State to track if the Google Maps API has loaded and the map instance
   const [mapApiLoaded, setMapApiLoaded] = useState(false);
   const [map, setMap] = useState(null);
 
+  const { user, setUser, loggedIn, setLoggedIn, isGuest } = useContext(UserContext);
   // State for user's location (set via geolocation)
   const [userLocation, setUserLocation] = useState(null);
 
   // Other state and context
-  const { user, setUser, loggedIn, setLoggedIn, isGuest } = useContext(UserContext);
   const navigate = useNavigate();
 
   // Map configuration
@@ -43,30 +46,60 @@ function HomePage() {
     height: "100vh",
   };
 
+  // Function to update user's location using geolocation API
+  const updateUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setUserLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+          },
+          (error) => console.error("Error getting user's location:", error)
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  };
+
+  // Handle the toggle button click for showing/hiding user's location
+  const handleToggleLocation = () => {
+    if (!showUserLocation) {
+      // Toggle ON: get the current location
+      updateUserLocation();
+      setShowUserLocation(true);
+    } else {
+      // Toggle OFF: clear the location
+      setUserLocation(null);
+      setShowUserLocation(false);
+    }
+  };
+
   // ESP32 Marker Component with InfoWindow
   const ESP32Marker = ({ lat, lng, device, isSentinel }) => {
     const [infoOpen, setInfoOpen] = useState(false);
     return (
-      <>
-        <Marker
-          position={{ lat, lng }}
-          icon={{
-            url: isSentinel
-              ? "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-              : "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-            scaledSize: new window.google.maps.Size(40, 40),
-          }}
-          onClick={() => setInfoOpen(true)}
-        />
-        {infoOpen && (
-          <InfoWindow position={{ lat, lng }} onCloseClick={() => setInfoOpen(false)}>
-            <div>
-              <h3>Device: {device}</h3>
-              <p>Type: {isSentinel ? "Sentinel" : "Regular"}</p>
-            </div>
-          </InfoWindow>
-        )}
-      </>
+        <>
+          <Marker
+              position={{ lat, lng }}
+              icon={{
+                url: isSentinel
+                    ? "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                    : "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                scaledSize: new window.google.maps.Size(40, 40),
+              }}
+              onClick={() => setInfoOpen(true)}
+          />
+          {infoOpen && (
+              <InfoWindow position={{ lat, lng }} onCloseClick={() => setInfoOpen(false)}>
+                <div>
+                  <h3>Device: {device}</h3>
+                  <p>Type: {isSentinel ? "Sentinel" : "Regular"}</p>
+                </div>
+              </InfoWindow>
+          )}
+        </>
     );
   };
 
@@ -146,17 +179,17 @@ function HomePage() {
     });
   }, [weatherFilters, heatmapData, map]);
 
-  // Get user's current location if allowed
+  // Get user's current location if allowed (this effect can be kept to run when user.shareLocation changes)
   useEffect(() => {
     if (user.shareLocation && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => console.error("Error getting user's location:", error)
+          (position) => {
+            setUserLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+          },
+          (error) => console.error("Error getting user's location:", error)
       );
     }
   }, [user.shareLocation]);
@@ -165,54 +198,54 @@ function HomePage() {
   const [devices, setDevices] = useState([]);
   useEffect(() => {
     fetch("/ESP32Locations.txt")
-      .then((res) => res.text())
-      .then((text) => {
-        const lines = text.split("\n").filter((line) => line.trim() !== "");
-        const parsedDevices = lines.map((line) => {
-          const [lat, lng, device, isSentinelStr] = line.split(",").map((str) => str.trim());
-          return {
-            lat: parseFloat(lat),
-            lng: parseFloat(lng),
-            device,
-            isSentinel: isSentinelStr.toLowerCase() === "true",
-          };
-        });
-        setDevices(parsedDevices);
-      })
-      .catch((err) => console.error("Error loading ESP32 locations:", err));
+        .then((res) => res.text())
+        .then((text) => {
+          const lines = text.split("\n").filter((line) => line.trim() !== "");
+          const parsedDevices = lines.map((line) => {
+            const [lat, lng, device, isSentinelStr] = line.split(",").map((str) => str.trim());
+            return {
+              lat: parseFloat(lat),
+              lng: parseFloat(lng),
+              device,
+              isSentinel: isSentinelStr.toLowerCase() === "true",
+            };
+          });
+          setDevices(parsedDevices);
+        })
+        .catch((err) => console.error("Error loading ESP32 locations:", err));
   }, []);
 
   // Function to load weather data from text files
   const loadWeatherData = (file, key) => {
     fetch(file)
-      .then((res) => {
-        if (!res.ok) throw new Error(`Failed to fetch ${key} data`);
-        return res.text();
-      })
-      .then((text) => {
-        const lines = text.split("\n").filter((line) => line.trim() !== "");
-        const data = lines
-          .map((line) => {
-            const [lat, lng, value] = line.split(",");
-            const latNum = parseFloat(lat);
-            const lngNum = parseFloat(lng);
-            const valueNum = parseFloat(value);
-            if (isNaN(latNum) || isNaN(lngNum) || isNaN(valueNum)) {
-              console.error("Invalid data:", line);
-              return null;
-            }
-            return {
-              location: new window.google.maps.LatLng(latNum, lngNum),
-              weight: valueNum,
-            };
-          })
-          .filter((item) => item !== null);
-        setHeatmapData((prevData) => ({
-          ...prevData,
-          [key]: data,
-        }));
-      })
-      .catch((err) => console.error(`Error fetching ${key} data`, err));
+        .then((res) => {
+          if (!res.ok) throw new Error(`Failed to fetch ${key} data`);
+          return res.text();
+        })
+        .then((text) => {
+          const lines = text.split("\n").filter((line) => line.trim() !== "");
+          const data = lines
+              .map((line) => {
+                const [lat, lng, value] = line.split(",");
+                const latNum = parseFloat(lat);
+                const lngNum = parseFloat(lng);
+                const valueNum = parseFloat(value);
+                if (isNaN(latNum) || isNaN(lngNum) || isNaN(valueNum)) {
+                  console.error("Invalid data:", line);
+                  return null;
+                }
+                return {
+                  location: new window.google.maps.LatLng(latNum, lngNum),
+                  weight: valueNum,
+                };
+              })
+              .filter((item) => item !== null);
+          setHeatmapData((prevData) => ({
+            ...prevData,
+            [key]: data,
+          }));
+        })
+        .catch((err) => console.error(`Error fetching ${key} data`, err));
   };
 
   // Load weather data when the Google Maps API is ready
@@ -265,197 +298,208 @@ function HomePage() {
   };
 
   const legendData = Object.keys(weatherFilters)
-    .filter((key) => weatherFilters[key])
-    .map((key) => ({
-      type: key,
-      ...getMinMax(heatmapData[key]),
-    }));
+      .filter((key) => weatherFilters[key])
+      .map((key) => ({
+        type: key,
+        ...getMinMax(heatmapData[key]),
+      }));
 
   return (
-    <div className="homepage-container">
-      {/* Sidebar */}
-      <div className="sidebar">
-        <div className="alert-box">
-          <h2>West Lafayette</h2>
-          <p>2 Alerts</p>
-        </div>
-        <nav>
-          <ul>
-            {!isGuest ? <li>
-              <Link to="/report">Make a Report</Link>
-            </li> : ""}
-            <li>
-              <Link to="/navigate">Navigate</Link>
-            </li>
-            <li>
-              <button className="sidebar-btn" onClick={toggleFiltersPopup}>
-                Map Layers
-              </button>
-            </li>
-            {user.agency_id != null ? 
-              <>
-                <li>
-                  <Link to="/devices/register">Register Device</Link>
-                </li>
-                <li>
-                  <Link to="/devices">View Devices</Link>
-                </li>
-              </>
-              : ""  
-            }
-          </ul>
-        </nav>
-        <div className="bottom-menu">
-          <ul>
-            {!isGuest ? 
-              <>
-                <Link to="/settings">
-                  <button className="button">Account</button>
-                </Link>
-                <button className="button" onClick={logout}>
-                  Log Out
+      <div className="homepage-container">
+        {/* Sidebar */}
+        <div className="sidebar">
+          <div className="alert-box">
+            <h2>West Lafayette</h2>
+            <p>2 Alerts</p>
+          </div>
+          <nav>
+            <ul>
+              {!isGuest ? (
+                  <li>
+                    <Link to="/report">Make a Report</Link>
+                  </li>
+              ) : (
+                  ""
+              )}
+              <li>
+                <Link to="/navigate">Navigate</Link>
+              </li>
+              <li>
+                <button className="sidebar-btn" onClick={toggleFiltersPopup}>
+                  Map Layers
                 </button>
-              </>
-            : 
-              <Link to="/login">
-                <button className="button">Login</button>
-              </Link>
-            }
-          </ul>
+              </li>
+              {user.agency_id != null ? (
+                  <>
+                    <li>
+                      <Link to="/devices/register">Register Device</Link>
+                    </li>
+                    <li>
+                      <Link to="/devices">View Devices</Link>
+                    </li>
+                  </>
+              ) : (
+                  ""
+              )}
+              {/* New toggle for user location */}
+              <li>
+                <button className="sidebar-btn" onClick={handleToggleLocation}>
+                  {showUserLocation ? "Hide Location" : "Show Location"}
+                </button>
+              </li>
+            </ul>
+          </nav>
+          <div className="bottom-menu">
+            <ul>
+              {!isGuest ? (
+                  <>
+                    <Link to="/settings">
+                      <button className="button">Account</button>
+                    </Link>
+                    <button className="button" onClick={logout}>
+                      Log Out
+                    </button>
+                  </>
+              ) : (
+                  <Link to="/login">
+                    <button className="button">Login</button>
+                  </Link>
+              )}
+            </ul>
+          </div>
         </div>
-      </div>
 
-      {/* Map Section */}
-      <div className="map-container" style={mapContainerStyle}>
-        <LoadScript
-          googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-          libraries={["visualization"]}
-          onLoad={() => setMapApiLoaded(true)}
-        >
-          <GoogleMap
-            center={center}
-            zoom={zoom}
-            mapContainerStyle={{ height: "100%", width: "100%" }}
-            onLoad={onLoad}
-            onUnmount={onUnmount}
-            options={{
-              mapTypeControl: true,
-              streetViewControl: true,
-              fullscreenControl: true,
-              zoomControl: true,
-            }}
+        {/* Map Section */}
+        <div className="map-container" style={mapContainerStyle}>
+          <LoadScript
+              googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+              libraries={["visualization"]}
+              onLoad={() => setMapApiLoaded(true)}
           >
-            {/* User's location marker */}
-            {user.shareLocation && mapApiLoaded && userLocation && (
-              <Marker
-                position={userLocation}
-                icon={{
-                  path: window.google.maps.SymbolPath.CIRCLE,
-                  fillColor: "#4285F4",
-                  fillOpacity: 1,
-                  strokeColor: "white",
-                  strokeWeight: 2,
-                  scale: 8,
+            <GoogleMap
+                center={center}
+                zoom={zoom}
+                mapContainerStyle={{ height: "100%", width: "100%" }}
+                onLoad={onLoad}
+                onUnmount={onUnmount}
+                options={{
+                  mapTypeControl: true,
+                  streetViewControl: true,
+                  fullscreenControl: true,
+                  zoomControl: true,
                 }}
-              />
-            )}
-            {/* Render ESP32 device markers when toggled on */}
-            {showESP32Devices &&
-              devices.map((device) => (
-                <ESP32Marker
-                  key={device.device}
-                  lat={device.lat}
-                  lng={device.lng}
-                  device={device.device}
-                  isSentinel={device.isSentinel}
-                />
-              ))}
-            {/* Note: Weather heatmap layers are managed via useEffect */}
-          </GoogleMap>
-        </LoadScript>
-      </div>
+            >
+              {/* User's location marker (conditionally render based on toggle state) */}
+              {showUserLocation && mapApiLoaded && userLocation && (
+                  <Marker
+                      position={userLocation}
+                      icon={{
+                        path: window.google.maps.SymbolPath.CIRCLE,
+                        fillColor: "#4285F4",
+                        fillOpacity: 1,
+                        strokeColor: "white",
+                        strokeWeight: 2,
+                        scale: 8,
+                      }}
+                  />
+              )}
+              {/* Render ESP32 device markers when toggled on */}
+              {showESP32Devices &&
+                  devices.map((device) => (
+                      <ESP32Marker
+                          key={device.device}
+                          lat={device.lat}
+                          lng={device.lng}
+                          device={device.device}
+                          isSentinel={device.isSentinel}
+                      />
+                  ))}
+              {/* Note: Weather heatmap layers are managed via useEffect */}
+            </GoogleMap>
+          </LoadScript>
+        </div>
 
-      {/* Dynamic Legend for Active Weather Filters */}
-      {legendData.length > 0 && (
-        <div className="legend">
-          {legendData.map(({ type, min, max }) => (
-            <div key={type} className="legend-item">
-              <div
-                className="gradient-box"
-                style={{
-                  background: `linear-gradient(to right, ${gradientMap[type].join(", ")})`,
-                }}
-              ></div>
-              <div className="legend-labels">
+        {/* Dynamic Legend for Active Weather Filters */}
+        {legendData.length > 0 && (
+            <div className="legend">
+              {legendData.map(({ type, min, max }) => (
+                  <div key={type} className="legend-item">
+                    <div
+                        className="gradient-box"
+                        style={{
+                          background: `linear-gradient(to right, ${gradientMap[type].join(", ")})`,
+                        }}
+                    ></div>
+                    <div className="legend-labels">
                 <span>
                   {type.charAt(0).toUpperCase() + type.slice(1)}: {min.toFixed(1)} - {max.toFixed(1)}
                 </span>
-              </div>
+                    </div>
+                  </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+        )}
 
-      {/* Map Layers Popup */}
-      {showFiltersPopup && (
-        <>
-          <div className="popup-overlay" onClick={() => setShowFiltersPopup(false)}></div>
-          <div className="filters-popup">
-            <div className="filters-popup-content">
-              <h2 className="filters-title">Map Layers</h2>
-              <div className="filter-row">
-                <input
-                  type="checkbox"
-                  name="temperature"
-                  checked={weatherFilters.temperature}
-                  onChange={handleWeatherFilterChange}
-                />
-                <label>Temperature</label>
+        {/* Map Layers Popup */}
+        {showFiltersPopup && (
+            <>
+              <div className="popup-overlay" onClick={() => setShowFiltersPopup(false)}></div>
+              <div className="filters-popup">
+                <div className="filters-popup-content">
+                  <h2 className="filters-title">Map Layers</h2>
+                  <div className="filter-row">
+                    <input
+                        type="checkbox"
+                        name="temperature"
+                        checked={weatherFilters.temperature}
+                        onChange={handleWeatherFilterChange}
+                    />
+                    <label>Temperature</label>
+                  </div>
+                  <div className="filter-row">
+                    <input
+                        type="checkbox"
+                        name="precipitation"
+                        checked={weatherFilters.precipitation}
+                        onChange={handleWeatherFilterChange}
+                    />
+                    <label>Precipitation</label>
+                  </div>
+                  <div className="filter-row">
+                    <input
+                        type="checkbox"
+                        name="windspeed"
+                        checked={weatherFilters.windspeed}
+                        onChange={handleWeatherFilterChange}
+                    />
+                    <label>Wind Speed</label>
+                  </div>
+                  <div className="filter-row">
+                    <input
+                        type="checkbox"
+                        name="humidity"
+                        checked={weatherFilters.humidity}
+                        onChange={handleWeatherFilterChange}
+                    />
+                    <label>Humidity</label>
+                  </div>
+                  <div className="filter-row">
+                    <input
+                        type="checkbox"
+                        name="esp32"
+                        checked={showESP32Devices}
+                        onChange={(e) => setShowESP32Devices(e.target.checked)}
+                    />
+                    <label>ESP32 Devices</label>
+                  </div>
+                  <button className="close-btn" onClick={() => setShowFiltersPopup(false)}>
+                    Close
+                  </button>
+                </div>
               </div>
-              <div className="filter-row">
-                <input
-                  type="checkbox"
-                  name="precipitation"
-                  checked={weatherFilters.precipitation}
-                  onChange={handleWeatherFilterChange}
-                />
-                <label>Precipitation</label>
-              </div>
-              <div className="filter-row">
-                <input
-                  type="checkbox"
-                  name="windspeed"
-                  checked={weatherFilters.windspeed}
-                  onChange={handleWeatherFilterChange}
-                />
-                <label>Wind Speed</label>
-              </div>
-              <div className="filter-row">
-                <input
-                  type="checkbox"
-                  name="humidity"
-                  checked={weatherFilters.humidity}
-                  onChange={handleWeatherFilterChange}
-                />
-                <label>Humidity</label>
-              </div>
-              <div className="filter-row">
-                <input
-                  type="checkbox"
-                  name="esp32"
-                  checked={showESP32Devices}
-                  onChange={(e) => setShowESP32Devices(e.target.checked)}
-                />
-                <label>ESP32 Devices</label>
-              </div>
-              <button className="close-btn" onClick={() => setShowFiltersPopup(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
+            </>
+        )}
+      </div>
   );
 }
 
