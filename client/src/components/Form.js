@@ -82,7 +82,7 @@ const Form = ({
             navigate(redirect)
         }, 3000);
       } catch (err) {
-        setErrorMessage(err.response?.data?.error || err.message);
+        setErrorMessage(err.response?.data);
       }
     }
   };

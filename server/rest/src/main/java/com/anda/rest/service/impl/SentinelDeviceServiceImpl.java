@@ -98,20 +98,24 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
     }
 
     @Override
-    public boolean claimSentinelDevice(int id, String password, int agency_id) {
+    public String claimSentinelDevice(int id, String password, int agency_id) {
         System.out.println(agency_id);
         SentinelDevice device = sentinelDeviceRepository.findById(id).orElse(null);
-        if (device == null || device.getPassword() == null || device.getAgencyId() != 0 || !device.getPassword().equals(password)) {
-            return false;
+        if (device == null || device.getPassword() == null) {
+            return "DEVICE DOES NOT EXIST";
+        } else if (device.getAgencyId() != 0) {
+            return "DEVICE IS ALREADY REGISTERED";
+        } else if (!device.getPassword().equals(password)) {
+            return "INCORRECT DEVICE PASSWORD";
         }
 
         device.setAgencyId(agency_id);
         try {
             sentinelDeviceRepository.save(device);
-            return true;
+            return "ok";
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return "INTERNAL SERVER ERROR";
         }
     }
 }

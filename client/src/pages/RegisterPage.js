@@ -6,7 +6,7 @@ import { UserContext } from "../components/UserProvider";
 
 function RegisterPage() {
   const navigate = useNavigate();
-  const { setLoggedIn } = useContext(UserContext);
+  const { setLoggedIn , loggedIn, user, setUser, isGuest, setIsGuest} = useContext(UserContext);
   const [admin, setAdmin] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // Store error message
   const [showPopup, setShowPopup] = useState(false); // Control popup visibility
@@ -67,12 +67,13 @@ function RegisterPage() {
         }
       });
       console.log("Register Successful:", response.data);
-      setLoggedIn(true);
-      navigate("/home");
+      setLoggedIn(false);
+      setIsGuest(false);
+      navigate("/login");
     } catch (error) {
       if (error.response) {
-        setErrorMessage(error.response.data); // Store error message from backend
-        setShowPopup(true); // Show popup
+        setErrorMessage(error.response.data);
+        setShowPopup(true);
       } else {
         setErrorMessage("Server error. Please try again.");
         setShowPopup(true);

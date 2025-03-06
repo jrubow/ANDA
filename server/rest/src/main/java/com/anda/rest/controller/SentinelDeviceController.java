@@ -51,15 +51,13 @@ public class SentinelDeviceController {
 
     @PostMapping("/claim")
     public ResponseEntity<String> claimSentinelDevice(@RequestBody Map<String, Object> body) {
+        String claimRes = "";
         try {
-            System.out.println(body.get("device_id"));
-            System.out.println(body.get("password"));
-            System.out.println((int) body.get("agency_id"));
-            System.out.println((Integer) body.get("agency_id"));
-            boolean isClaimed = sentinelDeviceService.claimSentinelDevice((Integer) body.get("device_id"), (String) body.get("password"), (int) body.get("agency_id"));
-            return isClaimed ? ResponseEntity.ok("SENTINEL DEVICE " + body.get("device_id") + " CLAIMED") : ResponseEntity.status(400).body("SENTINEL DEVICE NOT FOUND");
+            claimRes = sentinelDeviceService.claimSentinelDevice((Integer) body.get("device_id"), (String) body.get("password"), (int) body.get("agency_id"));
+            System.out.println(claimRes);
+            return claimRes.equals("ok") ? ResponseEntity.ok("SENTINEL DEVICE " + body.get("device_id") + " CLAIMED") : ResponseEntity.status(400).body(claimRes);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body("INCORRECT PASSWORD OR DEVICE ID");
+            return ResponseEntity.status(400).body(claimRes);
         }
     }
 
