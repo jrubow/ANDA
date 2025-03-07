@@ -243,14 +243,32 @@ public class AccountController {
             return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
         }
         boolean isDeleted = userService.deleteUser(request.getUsername(), request.getPassword());
+
         if (!isDeleted) {
             isDeleted = adminService.deleteAdmin(request.getUsername(), request.getPassword());
             if (isDeleted) {
+                Admin admin = adminService.getByUsername(request.getUsername());
+                LocalDateTime now = LocalDateTime.now();
+                emailService.sendEmail(admin.getEmail(), "ANDA: Account deleted",
+                        "### TEST ### TEST ### TEST ### TEST ###\n\n" +
+                                "This is an automatic message from ANDA system.\n\n" +
+                                admin.getFirst_name() + ", your account has been deleted successfully. " +
+                                "Your data is no longer stored with us nor with your agency within ANDA. We will miss you!..\n\n" +
+                                "Generated" + now);
                 return ResponseEntity.ok("ADMIN ACCOUNT DELETED SUCCESSFULLY");
             }
             return ResponseEntity.status(400).body("INVALID CREDENTIALS OR USERNAME NOT FOUND");
         }
         else {
+            User user = userService.getByUsername(request.getUsername());
+            LocalDateTime now = LocalDateTime.now();
+            emailService.sendEmail(user.getEmail(), "ANDA: Account deleted",
+                    "### TEST ### TEST ### TEST ### TEST ###\n\n" +
+                            "This is an automatic message from ANDA system.\n\n" +
+                            user.getFirst_name() + ", your account has been deleted successfully. " +
+                            "Your data is no longer stored with us. We will miss you!..\n\n" +
+                            "Generated" + now);
+
             return ResponseEntity.ok("USER ACCOUNT DELETED SUCCESSFULLY");
         }
     }
