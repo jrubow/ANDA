@@ -15,4 +15,5 @@ import java.util.Map;
     public SentinelDevice getSentinelDevice(int id);
     public List<SentinelDevice> getAllSentinelDevices();
     public String claimSentinelDevice(int id, String password, int agency_id);
+    public List<SentinelDevice> findByAgencyId(int agency_id);
 }
