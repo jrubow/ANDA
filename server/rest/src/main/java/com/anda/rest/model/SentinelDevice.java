@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 
 /**
  * Class for Sentinel Devices
@@ -21,7 +22,8 @@ public class SentinelDevice extends Device {
     // Additional fields specific to SentinelDevice
     private int num_connected_devices;
     private String password;
-    private int agency_id;
+    @Column(name="agency_id")
+    private int agencyId;
 
     // Default constructor
     public SentinelDevice() {}
@@ -41,7 +43,7 @@ public class SentinelDevice extends Device {
         super(sensor_id, latitude, longitude, battery_life, last_online, deployed_date, deployed);
         this.num_connected_devices = num_connected_devices;
         this.password = generatePassword(8);
-        this.agency_id = 0;
+        this.agencyId = 0;
     }
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
@@ -75,11 +77,11 @@ public class SentinelDevice extends Device {
     }
 
     public int getAgencyId() {
-        return this.agency_id;
+        return this.agencyId;
     }
 
     public void setAgencyId(int agencyId) {
         System.out.println(agencyId);
-        this.agency_id = agencyId;
+        this.agencyId = agencyId;
     }
 }

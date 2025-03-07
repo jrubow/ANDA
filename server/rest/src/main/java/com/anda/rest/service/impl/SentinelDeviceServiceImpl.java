@@ -118,4 +118,9 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
             return "INTERNAL SERVER ERROR";
         }
     }
+
+    @Override
+    public List<SentinelDevice> findByAgencyId(int agencyId) {
+        return sentinelDeviceRepository.findByAgencyId(agencyId);
+    }
 }

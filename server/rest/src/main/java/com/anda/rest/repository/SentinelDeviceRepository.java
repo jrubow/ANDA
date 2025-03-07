@@ -5,6 +5,7 @@ import com.anda.rest.model.SentinelDevice;
 import org.springframework.data.jpa.repository.JpaRepository;
 // import org.springframework.data.jpa.repository.Modifying;
 // import org.springframework.data.jpa.repository.Query;
+import java.util.List;
 
 /**
  * Interface for Sentinel repository
@@ -20,4 +21,5 @@ public interface SentinelDeviceRepository extends JpaRepository<SentinelDevice, 
 
     // @Query("SELECT u.login_attempts FROM User u WHERE u.username = :username")
     // int getLoginAttempts(String username);
+    List<SentinelDevice> findByAgencyId(int agencyId);
 }

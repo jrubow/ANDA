@@ -1,0 +1,53 @@
+/* DevicesPage.css */
+
+.devices-page {
+    padding: 80px 60px; /* Provides spacing similar to your navbar margins */
+    background-color: #f4f4f4;
+    min-height: 100vh;
+  }
+  
+  .page-title {
+    text-align: center;
+    font-family: "Russo One", serif;
+    font-size: 40px;
+    color: #007bff;
+    margin-bottom: 20px;
+    text-shadow: -2px -2px #002e60, 2px -2px #002e60, -2px 2px #002e60, 2px 2px #002e60;
+  }
+  
+  .devices-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .device-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 300px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .device-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .device-card h2 {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #007bff;
+  }
+  
+  .device-card p {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 16px;
+    margin: 5px 0;
+    color: #333;
+  }
+  

@@ -26,7 +26,7 @@ function LoginPage() {
         {
           headers: {
             "X-API-KEY": "user",
-                "Content-Type": "application/json"
+            "Content-Type": "application/json"
           }
         }
       )

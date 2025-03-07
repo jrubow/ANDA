@@ -1,8 +1,10 @@
 package com.anda.rest.controller;
 
+import com.anda.rest.model.Device;
 import com.anda.rest.model.SentinelDevice;
 import com.anda.rest.service.SentinelDeviceService;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +60,17 @@ public class SentinelDeviceController {
             return claimRes.equals("ok") ? ResponseEntity.ok("SENTINEL DEVICE " + body.get("device_id") + " CLAIMED") : ResponseEntity.status(400).body(claimRes);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(claimRes);
+        }
+    }
+
+    @PostMapping("/getbyagencyid")
+    public ResponseEntity<List<SentinelDevice>> getSentinelDeviceByAgencyId(@RequestBody Map<String, Object> body) {
+        List<SentinelDevice> devices = sentinelDeviceService.findByAgencyId((Integer) body.get("agency_id"));
+        
+        if (devices == null || devices.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok(devices);
         }
     }
 
