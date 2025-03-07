@@ -27,11 +27,11 @@ function SettingsPage() {
   const [deletePassword, setDeletePassword] = useState("");
 
   // Share location toggle state
-  const [shareLocation, setShareLocation] = useState(user.shareLocation);
+  const [shareLocation, setShareLocation] = useState(user.share_location);
 
   function toggleShareLocation(e) {
-    setShareLocation(!user.shareLocation);
-    setUser({ ...user, shareLocation: !user.shareLocation });
+    setShareLocation(!user.share_location);
+    setUser({ ...user, share_location: !user.share_location });
   }
 
   // Weather filters state

@@ -30,7 +30,7 @@ function HomePage() {
   const [showESP32Devices, setShowESP32Devices] = useState(false);
 
   // New state to control whether the user's location should be displayed
-  const [showUserLocation, setShowUserLocation] = useState(false);
+  const [showUserLocation, setShowUserLocation] = useState(user.share_location);
 
   // State to track if the Google Maps API has loaded and the map instance
   const [mapApiLoaded, setMapApiLoaded] = useState(false);
@@ -142,7 +142,7 @@ function HomePage() {
   const gradientMap = {
     temperature: temperatureGradient,
     humidity: humidityGradient,
-    precipitation: precipitationGradient,
+    rain: precipitationGradient,
     snow: snowGradient,
   };
 
@@ -186,7 +186,7 @@ function HomePage() {
 
   // Get user's current location if allowed (this effect can be kept to run when user.shareLocation changes)
   useEffect(() => {
-    if (user.shareLocation && navigator.geolocation) {
+    if (user.share_location && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
           (position) => {
             setUserLocation({
@@ -197,7 +197,7 @@ function HomePage() {
           (error) => console.error("Error getting user's location:", error)
       );
     }
-  }, [user.shareLocation]);
+  }, [user.share_location]);
 
   // Fetch ESP32 device locations
   const [devices, setDevices] = useState([]);
@@ -206,7 +206,7 @@ function HomePage() {
         .then((res) => res.text())
         .then((text) => {
           const lines = text.split("\n").filter((line) => line.trim() !== "");
-          const parsedDevices = lines.map((line) => {
+          const parsedDevices = lines !== undefined ? lines.map((line) => {
             const [lat, lng, device, isSentinelStr] = line.split(",").map((str) => str.trim());
             return {
               lat: parseFloat(lat),
@@ -214,7 +214,7 @@ function HomePage() {
               device,
               isSentinel: isSentinelStr.toLowerCase() === "true",
             };
-          });
+          }) : [];
           setDevices(parsedDevices);
         })
         .catch((err) => console.error("Error loading ESP32 locations:", err));
@@ -229,7 +229,7 @@ function HomePage() {
         })
         .then((text) => {
           const lines = text.split("\n").filter((line) => line.trim() !== "");
-          const data = lines
+          const data = lines != undefined ? lines
               .map((line) => {
                 const [lat, lng, value] = line.split(",");
                 const latNum = parseFloat(lat);
@@ -244,7 +244,7 @@ function HomePage() {
                   weight: valueNum,
                 };
               })
-              .filter((item) => item !== null);
+              .filter((item) => item !== null) : [];
           setHeatmapData((prevData) => ({
             ...prevData,
             [key]: data,
@@ -262,6 +262,20 @@ function HomePage() {
       loadWeatherData("/snowData.txt", "snow");
     }
   }, [mapApiLoaded]);
+
+  useEffect(() => {
+    if (user.share_location && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => console.error("Error getting user's location:", error)
+      );
+    }
+  }, [user.share_location]);
 
   // Google Map onLoad and onUnmount handlers
   const onLoad = React.useCallback((mapInstance) => {
@@ -313,11 +327,11 @@ function HomePage() {
   // Compute legend data for each active weather filter
   const getMinMax = (data) => {
     if (!data || data.length === 0) return { min: 0, max: 0 };
-    const values = data.map((point) => point.weight);
+    const values = data !== undefined ? data.map((point) => point.weight) : [];
     return {
       min: Math.min(...values),
       max: Math.max(...values),
-    };
+    } ;
   };
 
   const legendData = Object.keys(weatherFilters)
@@ -326,6 +340,8 @@ function HomePage() {
         type: key,
         ...getMinMax(heatmapData[key]),
       }));
+
+  console.log(legendData)
 
   return (
       <div className="homepage-container">
@@ -365,11 +381,11 @@ function HomePage() {
                   ""
               )}
               {/* New toggle for user location */}
-              <li>
+              {isGuest ? <li>
                 <button className="sidebar-btn" onClick={handleToggleLocation}>
                   {showUserLocation ? "Hide Location" : "Show Location"}
                 </button>
-              </li>
+              </li> : ""}
             </ul>
           </nav>
           <div className="bottom-menu">
@@ -427,7 +443,7 @@ function HomePage() {
                   />
               )}
               {/* Render ESP32 device markers when toggled on */}
-              {showESP32Devices &&
+              {showESP32Devices && devices !== undefined &&
                   devices.map((device) => (
                       <ESP32Marker
                           key={device.device}
@@ -445,7 +461,7 @@ function HomePage() {
         {/* Dynamic Legend for Active Weather Filters */}
         {legendData.length > 0 && (
             <div className="legend">
-              {legendData.map(({ type, min, max }) => (
+              {legendData !== undefined ? legendData.map(({ type, min, max }) => (
                   <div key={type} className="legend-item">
                     <div
                         className="gradient-box"
@@ -459,7 +475,7 @@ function HomePage() {
                 </span>
                     </div>
                   </div>
-              ))}
+              )) : ""}
             </div>
         )}
 
