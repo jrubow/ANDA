@@ -23,9 +23,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection if not needed
                 .authorizeHttpRequests(auth -> auth
-                        // Require authentication (via our API key filter) for all /api/guest/** endpoints
+                        // Allow public access to /api/verify/{username}
+                        .requestMatchers("/api/verify/*").permitAll()
+                        // Require authentication for all other /api/** endpoints
                         .requestMatchers("/api/**").authenticated()
-                        // For any other endpoints, you can also require authentication or permit all as needed
+                        // Require authentication for any other endpoints
                         .anyRequest().authenticated()
                 )
                 // Insert the API key filter so it runs before the standard username/password filter

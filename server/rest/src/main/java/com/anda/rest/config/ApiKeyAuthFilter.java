@@ -32,6 +32,13 @@ public class ApiKeyAuthFilter extends GenericFilterBean {
         HttpServletRequest httpRequest  = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        String requestURI = httpRequest.getRequestURI();
+        if (requestURI.matches("^/api/verify/[^/]+$")) {
+            // Skip API key authentication for /api/verify/{username}
+            chain.doFilter(request, response);
+            return;
+        }
+
         // Retrieve API key from the request header "X-API-KEY"
         String apiKey = httpRequest.getHeader("X-API-KEY");
 
