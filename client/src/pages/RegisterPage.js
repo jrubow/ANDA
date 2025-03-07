@@ -41,7 +41,7 @@ function RegisterPage() {
           password: formData.password,
           email: formData.email,
           first_name: formData.first_name,
-          last_name: formData.first_name,
+          last_name: formData.last_name,
           address: formData.address,
           phone_number: formData.phone_number,
           share_location: 0,
@@ -53,7 +53,7 @@ function RegisterPage() {
           password: formData.password,
           email: formData.email,
           first_name: formData.first_name,
-          last_name: formData.first_name,
+          last_name: formData.last_name,
           address: formData.address,
           phone_number: formData.phone_number,
           share_location: 0

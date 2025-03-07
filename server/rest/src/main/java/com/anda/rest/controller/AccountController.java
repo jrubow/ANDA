@@ -174,7 +174,7 @@ public class AccountController {
                                 "This is an automatic message from ANDA system.\n\n" +
                                 user.getFirst_name() + ", thank you for registering with ANDA. " +
                                 "We are happy to have you with us!\n\n" +
-                                "Generated" + now);
+                                "Generated: " + now);
 
             }
 
@@ -193,7 +193,7 @@ public class AccountController {
                             "This is an automatic message from ANDA system.\n\n" +
                             admin.getFirst_name() + ", you have been verified by your agency. " +
                             "You now have access to you account!\n\n" +
-                            "Generated" + now);
+                            "Generated: " + now);
             return ResponseEntity.ok("ANDA: Admin " + admin.getLast_name() + ", " + admin.getFirst_name() +
                     " at agency " + admin.getAgency_id() + " verified successfully!");
         } else {
@@ -252,7 +252,7 @@ public class AccountController {
                                 "This is an automatic message from ANDA system.\n\n" +
                                 admin.getFirst_name() + ", your account has been deleted successfully. " +
                                 "Your data is no longer stored with us nor with your agency within ANDA. We will miss you!..\n\n" +
-                                "Generated" + now);
+                                "Generated: " + now);
                 return ResponseEntity.ok("ADMIN ACCOUNT DELETED SUCCESSFULLY");
             }
             return ResponseEntity.status(400).body("INVALID CREDENTIALS OR USERNAME NOT FOUND");
@@ -263,7 +263,7 @@ public class AccountController {
                             "This is an automatic message from ANDA system.\n\n" +
                             user.getFirst_name() + ", your account has been deleted successfully. " +
                             "Your data is no longer stored with us. We will miss you!..\n\n" +
-                            "Generated" + now);
+                            "Generated: " + now);
 
             return ResponseEntity.ok("USER ACCOUNT DELETED SUCCESSFULLY");
         }
