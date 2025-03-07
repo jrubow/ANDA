@@ -2,7 +2,6 @@ package com.anda.rest.service;
 
 import com.anda.rest.model.User;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,4 +15,5 @@ public interface UserService {
     public boolean updateUserDetails(Map<String, Object> updates);
     public boolean existsByUsername(String username);
     public boolean deleteUser(String username, String password);
+    public User getByUsername(String username);
 }

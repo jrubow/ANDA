@@ -1,6 +1,5 @@
 package com.anda.rest.service.impl;
 
-import com.anda.rest.model.Admin;
 import com.anda.rest.model.User;
 import com.anda.rest.repository.UserRepository;
 import com.anda.rest.service.UserService;
@@ -145,4 +144,8 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }
