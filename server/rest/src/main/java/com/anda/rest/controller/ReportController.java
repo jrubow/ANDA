@@ -72,5 +72,10 @@ public class ReportController {
                 .body("ERROR : COULD NOT RETRIEVE DEVICE");
         }
     }
-    
+
+    @PostMapping("/batch")
+    public ResponseEntity<String> batchReport(@RequestBody List<Report> reports) {
+        reportService.createBatchReport(reports);
+        return ResponseEntity.ok("REPORTS PUSHED");
+    }
 }

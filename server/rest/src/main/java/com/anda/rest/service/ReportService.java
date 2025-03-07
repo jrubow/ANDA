@@ -13,4 +13,5 @@ import java.util.Map;
     public Report getReport(int id);
     public List<Report> getAllReports();
     public List<Report> getReportByDevice(int deviceId);
+    public void createBatchReport(List<Report> reports);
 }

@@ -19,6 +19,10 @@ public interface ReportRepository extends JpaRepository<Report, Integer> {
     @Query("SELECT reports FROM Report reports WHERE reports.device_id = :deviceId")
     List<Report> findReportsByDeviceId(@Param("device_id") Integer deviceId);
 
+
+    @Query("SELECT MAX(r.report_id) FROM Report r")
+    Integer findMaxReportId();
+
     // @Modifying
     // @Transactional
     // @Query("UPDATE User u SET u.login_attempts = 0 WHERE u.username = :username")

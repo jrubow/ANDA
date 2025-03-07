@@ -24,6 +24,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public boolean createReport(Report report) {
         try {
+            report.setReportId(getNextReportId());
             reportRepository.save(report);
             return true;
         } catch (Exception e) {
@@ -44,5 +45,17 @@ public class ReportServiceImpl implements ReportService {
 
     public List<Report> getReportByDevice(int device_id) {
         return reportRepository.findReportsByDeviceId(device_id);
+    }
+
+    @Override
+    public void createBatchReport(List<Report> reports) {
+        for (Report report : reports) {
+            createReport(report);
+        }
+    }
+
+    public int getNextReportId() {
+        Integer maxId = reportRepository.findMaxReportId();
+        return (maxId == null) ? 1 : maxId + 1;
     }
 }

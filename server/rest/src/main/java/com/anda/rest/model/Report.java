@@ -1,9 +1,13 @@
 package com.anda.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import java.time.LocalDateTime;
 
 /**
  * Report class for the reports table
@@ -33,13 +37,24 @@ public class Report {
     public Report() {
     }
 
-    public Report(int report_id, int device_id, String report_type, double value, String units) {
-        this.report_id = report_id;
+    @JsonCreator
+    public Report(
+            @JsonProperty("device_id") int device_id,
+            @JsonProperty("report_type") String report_type,
+            @JsonProperty("value") double value,
+            @JsonProperty("units") String units) {
         this.device_id = device_id;
         this.report_type = report_type;
         this.value = value;
         this.units = units;
     }
+
+//    public Report(int device_id, String report_type, double value, String units) {
+//        this.device_id = device_id;
+//        this.report_type = report_type;
+//        this.value = value;
+//        this.units = units;
+//    }
 
     // Getters and Setters
     public int getReportId() {
