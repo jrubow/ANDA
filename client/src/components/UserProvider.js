@@ -23,7 +23,7 @@ const UserProvider = ({ children }) => {
     flood : 0,
   });
 
-  const [loggedIn, setLoggedIn] = useState(storedLoggedIn === "false");
+  const [loggedIn, setLoggedIn] = useState(false);
   const [isGuest, setIsGuest] = useState(storedIsGuest === "true");
 
   useEffect(() => {

@@ -287,7 +287,13 @@ function HomePage() {
   }, []);
 
   // Toggle the filters popup
-  const toggleFiltersPopup = () => setShowFiltersPopup(!showFiltersPopup);
+  function toggleFiltersPopup() {
+    if (!isGuest) {
+      setShowFiltersPopup(!showFiltersPopup)
+    } else {
+      navigate("/login")
+    }
+  }
 
   // Logout function
   const logout = (e) => {
@@ -383,7 +389,7 @@ function HomePage() {
               {/* New toggle for user location */}
               {isGuest ? <li>
                 <button className="sidebar-btn" onClick={handleToggleLocation}>
-                  {showUserLocation ? "Hide Location" : "Show Location"}
+                  {showUserLocation ? "Hide Location" : "Map a Route"}
                 </button>
               </li> : ""}
             </ul>
