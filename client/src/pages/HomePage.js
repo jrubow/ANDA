@@ -36,7 +36,6 @@ function HomePage() {
   const [mapApiLoaded, setMapApiLoaded] = useState(false);
   const [map, setMap] = useState(null);
 
-  const { user, setUser, loggedIn, setLoggedIn, isGuest } = useContext(UserContext);
   // State for user's location (set via geolocation)
   const [userLocation, setUserLocation] = useState(null);
 
@@ -464,7 +463,6 @@ function HomePage() {
             </div>
         )}
 
-<<<<<<< HEAD
       {/* Map Layers Popup */}
       {showFiltersPopup && (
         <>
@@ -525,68 +523,6 @@ function HomePage() {
         </>
       )}
     </div>
-=======
-        {/* Map Layers Popup */}
-        {showFiltersPopup && (
-            <>
-              <div className="popup-overlay" onClick={() => setShowFiltersPopup(false)}></div>
-              <div className="filters-popup">
-                <div className="filters-popup-content">
-                  <h2 className="filters-title">Map Layers</h2>
-                  <div className="filter-row">
-                    <input
-                        type="checkbox"
-                        name="temperature"
-                        checked={weatherFilters.temperature}
-                        onChange={handleWeatherFilterChange}
-                    />
-                    <label>Temperature</label>
-                  </div>
-                  <div className="filter-row">
-                    <input
-                        type="checkbox"
-                        name="precipitation"
-                        checked={weatherFilters.precipitation}
-                        onChange={handleWeatherFilterChange}
-                    />
-                    <label>Precipitation</label>
-                  </div>
-                  <div className="filter-row">
-                    <input
-                        type="checkbox"
-                        name="windspeed"
-                        checked={weatherFilters.windspeed}
-                        onChange={handleWeatherFilterChange}
-                    />
-                    <label>Wind Speed</label>
-                  </div>
-                  <div className="filter-row">
-                    <input
-                        type="checkbox"
-                        name="humidity"
-                        checked={weatherFilters.humidity}
-                        onChange={handleWeatherFilterChange}
-                    />
-                    <label>Humidity</label>
-                  </div>
-                  <div className="filter-row">
-                    <input
-                        type="checkbox"
-                        name="esp32"
-                        checked={showESP32Devices}
-                        onChange={(e) => setShowESP32Devices(e.target.checked)}
-                    />
-                    <label>ESP32 Devices</label>
-                  </div>
-                  <button className="close-btn" onClick={() => setShowFiltersPopup(false)}>
-                    Close
-                  </button>
-                </div>
-              </div>
-            </>
-        )}
-      </div>
->>>>>>> fe76e1d72659f6761d0b7bc45c5a2ad0dd3f1032
   );
 }
 
