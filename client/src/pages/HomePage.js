@@ -258,7 +258,7 @@ function HomePage() {
     if (mapApiLoaded) {
       loadWeatherData("/temperatureData.txt", "temperature");
       loadWeatherData("/humidityData.txt", "humidity");
-      loadWeatherData("/precipitationData.txt", "precipitation");
+      loadWeatherData("/precipitationData.txt", "rain");
       loadWeatherData("/snowData.txt", "snow");
     }
   }, [mapApiLoaded]);
@@ -291,7 +291,7 @@ function HomePage() {
     if (!isGuest) {
       setShowFiltersPopup(!showFiltersPopup)
     } else {
-      navigate("/login")
+      alert("Please log in!")
     }
   }
 
@@ -467,7 +467,7 @@ function HomePage() {
         {/* Dynamic Legend for Active Weather Filters */}
         {legendData.length > 0 && (
             <div className="legend">
-              {legendData !== undefined ? legendData.map(({ type, min, max }) => (
+              {legendData.map(({ type, min, max }) => (
                   <div key={type} className="legend-item">
                     <div
                         className="gradient-box"
@@ -481,7 +481,7 @@ function HomePage() {
                 </span>
                     </div>
                   </div>
-              )) : ""}
+              ))}
             </div>
         )}
 
