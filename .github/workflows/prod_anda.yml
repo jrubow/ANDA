@@ -48,13 +48,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: java-app
-
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_9EBD709759014139BE66C9D9287F4A9F }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C6C1A063EB84410FB41C7B7F0FEEB2C3 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_74B3822E20F340A99B6F51F8ECBF4941 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D8B8FE147F3C4C56A720B7A30F9AF54E }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_0CE8F59B94AE4A6AA0C87B6EE25D97CF }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_48E752DFE80B4F5DA546FE912C29DE6C }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -63,3 +63,4 @@ jobs:
           app-name: 'ANDA'
           slot-name: 'Production'
           package: '*.jar'
+          
