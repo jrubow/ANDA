@@ -20,9 +20,13 @@ public abstract class Account {
     private String phone_number;
     private int share_location;
     private int login_attempts;
+    private int temperature;
+    private int snow;
+    private int rain;
+    private int humidity;
 
     public Account(String username, String password, String email, String first_name, String last_name,
-                   String address, String phone_number, int share_location) {
+                   String address, String phone_number, int share_location, int temperature, int snow, int rain, int humidity) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -32,6 +36,10 @@ public abstract class Account {
         this.phone_number = phone_number;
         this.share_location = share_location;
         this.login_attempts = 0;
+        this.temperature = temperature;
+        this.snow = snow;
+        this.rain = rain;
+        this.humidity = humidity;
     }
 
     public Account(String username, int loginAttempts) {
@@ -113,5 +121,37 @@ public abstract class Account {
 
     public void setLogin_attempts(int login_attempts) {
         this.login_attempts = login_attempts;
+    }
+
+    public int getTemperature() {
+        return this.temperature;
+    }
+
+    public void setTemperature(int temperature) {
+        this.temperature = temperature;
+    }
+
+    public int getSnow() {
+        return this.snow;
+    }
+
+    public void setSnow(int snow) {
+        this.snow = snow;
+    }
+
+    public int getRain() {
+        return this.rain;
+    }
+
+    public void setRain(int rain) {
+        this.rain = rain;
+    }
+
+    public int getHumidity() {
+        return this.humidity;
+    }
+
+    public void setHumidity(int humidity) {
+        this.humidity = humidity;
     }
 }

@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
             return false;
         }
 
-        Set<String> allowedFields = Set.of("password", "email", "address", "phone_number", "share_location");
+        Set<String> allowedFields = Set.of("password", "email", "address", "phone_number", "share_location", "snow", "rain", "temperature", "humidity");
 
         for (String key : updates.keySet()) {
             if (!allowedFields.contains(key) && !key.equals("username")) {
@@ -87,6 +87,10 @@ public class UserServiceImpl implements UserService {
                         existingUser.setPhone_number((String) value);
                     }
                     case "share_location" -> existingUser.setShare_location((Integer) value);
+                    case "snow" -> existingUser.setSnow(1 ^ existingUser.getSnow());
+                    case "rain" -> existingUser.setRain(1 ^ existingUser.getRain());
+                    case "temperature" -> existingUser.setTemperature(1 ^ existingUser.getTemperature());
+                    case "humidity" -> existingUser.setHumidity(1 ^ existingUser.getHumidity());
                 }
             }
         });

@@ -22,14 +22,25 @@ function LoginPage() {
       const response = await axios.post("/api/login", {
         username: username,
         password: password,
-      },
-      {
-        headers: {
-          "X-API-KEY": "user",
-              "Content-Type": "application/json"
+        },
+        {
+          headers: {
+            "X-API-KEY": "user",
+                "Content-Type": "application/json"
+          }
         }
-      }
-    );
+      )
+
+      // const filterResponse = await axios.post("/api/filter", {
+      //   username: username
+      //   },
+      //   {
+      //     headers: {
+      //       "X-API-KEY": "user",
+      //       "Content-Type": "application/json"
+      //     }
+      //   }
+      // )
 
       console.log("Login Successful:", response.data);
       setLoggedIn(true);
@@ -43,6 +54,12 @@ function LoginPage() {
         phone_number: response.data.phone_number,
         share_location: response.data.share_location,
         agency_id: response.data.agency_id === undefined ? null : response.data.agency_id,
+        // ice: filterResponse.ice,
+        // flood: filterResponse.flood,
+        temperature: response.data.temperature,
+        snow: response.data.snow,
+        rain: response.data.rain,
+        humidity: response.data.humidity
       });
       setIsGuest(false)
       navigate("/home")

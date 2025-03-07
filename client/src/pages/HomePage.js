@@ -3,21 +3,27 @@ import "../css/pages/homepage.css";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../components/UserProvider";
 import { LoadScript, GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
+import axios from "axios"
+
 
 function HomePage() {
+  // User Context
+  const { user, setUser, loggedIn, setLoggedIn, isGuest, setIsGuest } = useContext(UserContext);
+
+
   // State for popup, weather filters, and heatmap data
   const [showFiltersPopup, setShowFiltersPopup] = useState(false);
   const [weatherFilters, setWeatherFilters] = useState({
-    temperature: false,
-    humidity: false,
-    precipitation: false,
-    windspeed: false,
+    temperature: user.temperature,
+    humidity: user.humidity,
+    rain: user.rain,
+    snow: user.snow,
   });
   const [heatmapData, setHeatmapData] = useState({
     temperature: [],
     humidity: [],
     precipitation: [],
-    windspeed: [],
+    snow: [],
   });
 
   // New state to control the visibility of ESP32 device markers
@@ -31,7 +37,6 @@ function HomePage() {
   const [userLocation, setUserLocation] = useState(null);
 
   // Other state and context
-  const { user, setUser, loggedIn, setLoggedIn, isGuest } = useContext(UserContext);
   const navigate = useNavigate();
 
   // Map configuration
@@ -75,7 +80,7 @@ function HomePage() {
     temperature: null,
     humidity: null,
     precipitation: null,
-    windspeed: null,
+    snow: null,
   });
 
   // Define custom gradients for each weather type
@@ -94,7 +99,7 @@ function HomePage() {
     "rgba(173, 216, 230, 0.5)",
     "rgba(25, 25, 112, 1)",
   ];
-  const windspeedGradient = [
+  const snowGradient = [
     "rgba(255, 165, 0, 0)",
     "rgba(255, 165, 0, 0.5)",
     "rgba(255, 69, 0, 1)",
@@ -105,13 +110,13 @@ function HomePage() {
     temperature: temperatureGradient,
     humidity: humidityGradient,
     precipitation: precipitationGradient,
-    windspeed: windspeedGradient,
+    snow: snowGradient,
   };
 
   // Manage heatmap layers manually based on weatherFilters, heatmapData, and map
   useEffect(() => {
     if (!map) return;
-    const types = ["temperature", "humidity", "precipitation", "windspeed"];
+    const types = ["temperature", "humidity", "precipitation", "snow"];
     types.forEach((type) => {
       if (weatherFilters[type]) {
         // If the filter is enabled, create or update the layer.
@@ -120,7 +125,7 @@ function HomePage() {
           if (type === "temperature") gradient = temperatureGradient;
           else if (type === "humidity") gradient = humidityGradient;
           else if (type === "precipitation") gradient = precipitationGradient;
-          else if (type === "windspeed") gradient = windspeedGradient;
+          else if (type === "snow") gradient = snowGradient;
 
           const newLayer = new window.google.maps.visualization.HeatmapLayer({
             data: heatmapData[type],
@@ -221,7 +226,7 @@ function HomePage() {
       loadWeatherData("/temperatureData.txt", "temperature");
       loadWeatherData("/humidityData.txt", "humidity");
       loadWeatherData("/precipitationData.txt", "precipitation");
-      loadWeatherData("/windspeedData.txt", "windspeed");
+      loadWeatherData("/snowData.txt", "snow");
     }
   }, [mapApiLoaded]);
 
@@ -240,19 +245,37 @@ function HomePage() {
   // Logout function
   const logout = (e) => {
     e.preventDefault();
-    localStorage.removeItem("user");
-    setLoggedIn(false);
-    navigate("/login");
+    localStorage.removeItem("user")
+    setLoggedIn(false)
+    setIsGuest(false)
+    navigate("/login")
   };
 
   // Handle weather filter changes via checkboxes
-  const handleWeatherFilterChange = (e) => {
+  async function handleWeatherFilterChange(e) {
     const { name, checked } = e.target;
-    setWeatherFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: checked,
-    }));
-  };
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+          "/api/update",
+          {
+            username: user.username,
+            [name]: checked,
+          },
+          {
+            headers: {
+              "X-API-KEY": "user",
+              "Content-Type": "application/json",
+            },
+          }
+      );
+      setUser({...user, [name] : checked})
+      console.log("Data:", response.data);
+    } catch (error) {
+      console.error("Error Posting Data :", error.message);
+      alert(error.message);
+    }
+  }
 
   // Compute legend data for each active weather filter
   const getMinMax = (data) => {
@@ -407,7 +430,7 @@ function HomePage() {
                 <input
                   type="checkbox"
                   name="temperature"
-                  checked={weatherFilters.temperature}
+                  checked={user.temperature}
                   onChange={handleWeatherFilterChange}
                 />
                 <label>Temperature</label>
@@ -415,8 +438,8 @@ function HomePage() {
               <div className="filter-row">
                 <input
                   type="checkbox"
-                  name="precipitation"
-                  checked={weatherFilters.precipitation}
+                  name="rain"
+                  checked={user.rain}
                   onChange={handleWeatherFilterChange}
                 />
                 <label>Precipitation</label>
@@ -424,22 +447,22 @@ function HomePage() {
               <div className="filter-row">
                 <input
                   type="checkbox"
-                  name="windspeed"
-                  checked={weatherFilters.windspeed}
+                  name="snow"
+                  checked={user.snow}
                   onChange={handleWeatherFilterChange}
                 />
-                <label>Wind Speed</label>
+                <label>Snow</label>
               </div>
               <div className="filter-row">
                 <input
                   type="checkbox"
                   name="humidity"
-                  checked={weatherFilters.humidity}
+                  checked={user.humidity}
                   onChange={handleWeatherFilterChange}
                 />
                 <label>Humidity</label>
               </div>
-              <div className="filter-row">
+              {/* <div className="filter-row">
                 <input
                   type="checkbox"
                   name="esp32"
@@ -447,7 +470,7 @@ function HomePage() {
                   onChange={(e) => setShowESP32Devices(e.target.checked)}
                 />
                 <label>ESP32 Devices</label>
-              </div>
+              </div> */}
               <button className="close-btn" onClick={() => setShowFiltersPopup(false)}>
                 Close
               </button>

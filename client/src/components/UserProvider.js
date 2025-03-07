@@ -16,7 +16,11 @@ const UserProvider = ({ children }) => {
     address: "",
     phone_number: 0,
     share_location: 0,
-    agency_id: null
+    agency_id: null,
+    snow: 0,
+    rain : 0,
+    ice : 0,
+    flood : 0,
   });
 
   const [loggedIn, setLoggedIn] = useState(storedLoggedIn === "true");

@@ -36,10 +36,10 @@ function SettingsPage() {
 
   // Weather filters state
   const [weatherFilters, setWeatherFilters] = useState({
-    temperature: false,
-    precipitation: false,
-    windSpeed: false,
-    humidity: false,
+    temperature: user.temperature,
+    rain: user.rain,
+    snow: user.snow,
+    humidity: user.humidity,
   });
 
   // Ref for the hidden file input
@@ -239,8 +239,30 @@ function SettingsPage() {
   };
 
   // Handler for weather filters
-  const handleWeatherFilterChange = (e) => {
+  async function handleWeatherFilterChange(e) {
     const { name, checked } = e.target;
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+          "/api/update",
+          {
+            username: user.username,
+            [name]: checked,
+          },
+          {
+            headers: {
+              "X-API-KEY": "user",
+              "Content-Type": "application/json",
+            },
+          }
+      );
+      setUser({...user, [name] : checked})
+      console.log("Data:", response.data);
+    } catch (error) {
+      console.error("Error Posting Data :", error.message);
+      alert(error.message);
+    }
+
     setWeatherFilters((prevFilters) => ({
       ...prevFilters,
       [name]: checked,
@@ -499,8 +521,8 @@ function SettingsPage() {
                   <div className="filter-row">
                     <input
                         type="checkbox"
-                        name="precipitation"
-                        checked={weatherFilters.precipitation}
+                        name="rain"
+                        checked={weatherFilters.rain}
                         onChange={handleWeatherFilterChange}
                     />
                     <label>Precipitation</label>
@@ -508,11 +530,11 @@ function SettingsPage() {
                   <div className="filter-row">
                     <input
                         type="checkbox"
-                        name="windSpeed"
-                        checked={weatherFilters.windSpeed}
+                        name="snow"
+                        checked={weatherFilters.snow}
                         onChange={handleWeatherFilterChange}
                     />
-                    <label>Wind Speed</label>
+                    <label>Snow</label>
                   </div>
                   <div className="filter-row">
                     <input

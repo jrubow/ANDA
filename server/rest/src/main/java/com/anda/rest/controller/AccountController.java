@@ -187,11 +187,7 @@ public class AccountController {
     }
 
     @GetMapping("/verify/{username}")
-    public ResponseEntity<String> verifyAdmin(Authentication authentication, @PathVariable String username) {
-        if (authentication != null && authentication.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
-            return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
-        }
+    public ResponseEntity<String> verifyAdmin(@PathVariable String username) {
         boolean isVerified = adminService.verifyAdmin(username);
         if (isVerified) {
             Admin admin = adminService.getByUsername(username);
