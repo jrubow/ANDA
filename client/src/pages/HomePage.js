@@ -206,7 +206,7 @@ function HomePage() {
         .then((res) => res.text())
         .then((text) => {
           const lines = text.split("\n").filter((line) => line.trim() !== "");
-          const parsedDevices = lines !== undefined ? lines.map((line) => {
+          const parsedDevices = lines.map((line) => {
             const [lat, lng, device, isSentinelStr] = line.split(",").map((str) => str.trim());
             return {
               lat: parseFloat(lat),
@@ -214,7 +214,7 @@ function HomePage() {
               device,
               isSentinel: isSentinelStr.toLowerCase() === "true",
             };
-          }) : [];
+          });
           setDevices(parsedDevices);
         })
         .catch((err) => console.error("Error loading ESP32 locations:", err));
@@ -229,7 +229,7 @@ function HomePage() {
         })
         .then((text) => {
           const lines = text.split("\n").filter((line) => line.trim() !== "");
-          const data = lines != undefined ? lines
+          const data = lines
               .map((line) => {
                 const [lat, lng, value] = line.split(",");
                 const latNum = parseFloat(lat);
@@ -244,7 +244,7 @@ function HomePage() {
                   weight: valueNum,
                 };
               })
-              .filter((item) => item !== null) : [];
+              .filter((item) => item !== null);
           setHeatmapData((prevData) => ({
             ...prevData,
             [key]: data,
@@ -333,19 +333,24 @@ function HomePage() {
   // Compute legend data for each active weather filter
   const getMinMax = (data) => {
     if (!data || data.length === 0) return { min: 0, max: 0 };
-    const values = data !== undefined ? data.map((point) => point.weight) : [];
+    const values = data.map((point) => point.weight);
     return {
       min: Math.min(...values),
       max: Math.max(...values),
     } ;
   };
 
-  const legendData = Object.keys(weatherFilters)
-      .filter((key) => weatherFilters[key])
-      .map((key) => ({
-        type: key,
-        ...getMinMax(heatmapData[key]),
-      }));
+  const legendData = Object.keys({
+    temperature: user.temperature,
+    humidity: user.humidity,
+    rain: user.rain,
+    snow: user.snow,
+  }).filter((key) => user[key])
+    .map((key) => ({
+      type: key,
+      ...getMinMax(heatmapData[key]),
+    }));
+  
 
   console.log(legendData)
 
@@ -449,7 +454,7 @@ function HomePage() {
                   />
               )}
               {/* Render ESP32 device markers when toggled on */}
-              {showESP32Devices && devices !== undefined &&
+              {showESP32Devices  &&
                   devices.map((device) => (
                       <ESP32Marker
                           key={device.device}
