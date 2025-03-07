@@ -238,12 +238,19 @@ public class AccountController {
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
             return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
         }
-        boolean isDeleted = userService.deleteUser(request.getUsername(), request.getPassword());
+
+        User user = userService.getByUsername(request.getUsername());
+        boolean isDeleted = false;
+        if (user != null) {
+            isDeleted = userService.deleteUser(request.getUsername(), request.getPassword());
+        }
 
         if (!isDeleted) {
-            isDeleted = adminService.deleteAdmin(request.getUsername(), request.getPassword());
+            Admin admin = adminService.getByUsername(request.getUsername());
+            if (admin != null) {
+                isDeleted = adminService.deleteAdmin(request.getUsername(), request.getPassword());
+            }
             if (isDeleted) {
-                Admin admin = adminService.getByUsername(request.getUsername());
                 LocalDateTime now = LocalDateTime.now();
                 emailService.sendEmail(admin.getEmail(), "ANDA: Account deleted",
                         "### TEST ### TEST ### TEST ### TEST ###\n\n" +
@@ -256,7 +263,6 @@ public class AccountController {
             return ResponseEntity.status(400).body("INVALID CREDENTIALS OR USERNAME NOT FOUND");
         }
         else {
-            User user = userService.getByUsername(request.getUsername());
             LocalDateTime now = LocalDateTime.now();
             emailService.sendEmail(user.getEmail(), "ANDA: Account deleted",
                     "### TEST ### TEST ### TEST ### TEST ###\n\n" +
