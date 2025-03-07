@@ -9,7 +9,7 @@ import java.util.Map;
  */
 
  public interface SentinelDeviceService {
-    public boolean createSentinelDevice(SentinelDevice device);
+    public int createSentinelDevice(SentinelDevice device);
     public boolean updateSentinelDevice(Map<String, Object> updates);
     public String deleteSentinelDevice(int id);
     public SentinelDevice getSentinelDevice(int id);

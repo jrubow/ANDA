@@ -35,7 +35,7 @@ public class SentinelDevice extends Device {
             @JsonProperty("latitude") double latitude,
             @JsonProperty("longitude") double longitude,
             @JsonProperty("battery_life") double battery_life,
-            @JsonProperty("last_online") LocalDateTime last_online,
+            @JsonProperty("last_online") String last_online,
             @JsonProperty("deployed_date") LocalDateTime deployed_date,
             @JsonProperty("deployed") int deployed,
             @JsonProperty("is_connected") int is_connected,

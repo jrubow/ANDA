@@ -3,6 +3,8 @@ package com.anda.rest.repository;
 import com.anda.rest.model.SentinelDevice;
 // import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
 // import org.springframework.data.jpa.repository.Modifying;
 // import org.springframework.data.jpa.repository.Query;
 import java.util.List;
@@ -22,4 +24,7 @@ public interface SentinelDeviceRepository extends JpaRepository<SentinelDevice, 
     // @Query("SELECT u.login_attempts FROM User u WHERE u.username = :username")
     // int getLoginAttempts(String username);
     List<SentinelDevice> findByAgencyId(int agencyId);
+
+    @Query("SELECT MAX(r.device_id) FROM SentinelDevice r")
+    Integer findMaxDeviceId();
 }

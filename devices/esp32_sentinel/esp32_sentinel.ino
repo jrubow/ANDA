@@ -10,17 +10,23 @@
 
 const char* externalSSID = "test1234";
 const char* externalPassword = "password123";
-const char* apiEndpoint = "https://asterlink-fzgndcaefabkb0gh.eastus-01.azurewebsites.net/record/batch";
+
+// API endpoints
+const char* batchApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/reports/batch";
+const char* initApiEndpoint = "https://anda-ate6apf9cec3czb6.centralus-01.azurewebsites.net/api/devices/sentinel/initialize";
 
 Scheduler userScheduler;
 painlessMesh mesh;
 
 std::vector<String> dataBuffer;
 unsigned long lastSentTime = 0;
-const unsigned long interval = 60000;
+const unsigned long interval = 60000;  // 60 seconds interval
 const char* ntpServer = "time.google.com";
 const long gmtOffset_sec = -5;
 const int daylightOffset_sec = 0;
+
+// Global variable to store registered device id from initialization response
+uint32_t registeredDeviceId = 0;
 
 void processReceivedData(const String& msg);
 
@@ -47,31 +53,35 @@ void processReceivedData(const String& msg) {
         return;
     }
 
-    uint32_t device_id = jsonDoc["device_id"];
+    // Read sensor data fields from the incoming message
+    uint32_t sensorDeviceId = jsonDoc["device_id"];
     float temperature = jsonDoc["temperature"];
     float humidity = jsonDoc["humidity"];
     int light_level = jsonDoc["light_level"];
     int soil_moisture = jsonDoc["soil_moisture"];
 
     Serial.println("\n--- Sensor Data Received ---");
-    Serial.printf("Device ID: %u\n", device_id);
+    Serial.printf("Sensor Device ID: %u\n", sensorDeviceId);
     Serial.printf("Temperature: %.2f°C\n", temperature);
     Serial.printf("Humidity: %.2f%%\n", humidity);
     Serial.printf("Light Level: %d%%\n", light_level);
     Serial.printf("Soil Moisture: %d%%\n", soil_moisture);
     Serial.println("----------------------------");
+    float temperatureF = temperature * 9.0 / 5.0 + 32.0;
 
+    // Create JSON report for temperature reading in the new batch format
     StaticJsonDocument<256> pushDoc;
-    pushDoc["device_id"] = device_id;
-    pushDoc["temp"] = temperature;
-    pushDoc["humidity"] = humidity;
-    pushDoc["light"] = light_level;
-    pushDoc["soil"] = soil_moisture;
+    // Use the registered device id (if set) instead of the sensor's device id.
+    uint32_t reportDeviceId = (registeredDeviceId != 0) ? registeredDeviceId : sensorDeviceId;
+    pushDoc["device_id"] = reportDeviceId;
+    pushDoc["report_type"] = "TEMP";
+    pushDoc["value"] = temperatureF;
+    pushDoc["units"] = "Fahrenheit";
 
     String pushPayload;
     serializeJson(pushDoc, pushPayload);
 
-    dataBuffer.push_back(pushPayload); // Store the data for batch processing
+    dataBuffer.push_back(pushPayload);
 }
 
 void sendDataToAPI() {
@@ -83,7 +93,7 @@ void sendDataToAPI() {
     Serial.println("Connecting to WiFi...");
     WiFi.begin(externalSSID, externalPassword);
     unsigned long wifiStart = millis();
-    while (WiFi.status() != WL_CONNECTED && millis() - wifiStart < 10000) { // 10s timeout
+    while (WiFi.status() != WL_CONNECTED && millis() - wifiStart < 10000) {
         delay(500);
         Serial.print(".");
     }
@@ -93,9 +103,10 @@ void sendDataToAPI() {
         return;
     }
     
-    Serial.println("\nConnected to WiFi, sending data...");
+    Serial.println("\nConnected to WiFi, sending batch data...");
 
-    StaticJsonDocument<2048> batchJson; // Adjust size if needed
+    // Build batch JSON array payload
+    StaticJsonDocument<2048> batchJson;
     JsonArray jsonArray = batchJson.to<JsonArray>();
     String timestamp = getFormattedTime();
     for (const auto& entry : dataBuffer) {
@@ -106,11 +117,13 @@ void sendDataToAPI() {
     }
 
     String batchPayload;
-    
     serializeJson(batchJson, batchPayload);
+    Serial.println("Batch Payload:");
     Serial.println(batchPayload);
+
     HTTPClient http;
-    http.begin(apiEndpoint);
+    http.begin(batchApiEndpoint);
+    http.addHeader("X-API-KEY", "user");
     http.addHeader("Content-Type", "application/json");
 
     int httpResponseCode = http.POST(batchPayload);
@@ -118,7 +131,7 @@ void sendDataToAPI() {
 
     if (httpResponseCode > 0) {
         Serial.println("Data sent successfully!");
-        dataBuffer.clear(); // Clear the buffer after successful send
+        dataBuffer.clear();
     } else {
         Serial.println("Failed to send data.");
     }
@@ -132,12 +145,65 @@ String getFormattedTime() {
     struct tm timeinfo;
     if (!getLocalTime(&timeinfo)) {
         Serial.println("Failed to obtain time");
-        return "2025-02-05T10:02:00.000Z"; // Fallback timestamp
+        return "2025-02-05T10:02:00.000Z";
     }
 
     char buffer[30];
     strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S.000Z", &timeinfo);
     return String(buffer);
+}
+
+void initializeDevice() {
+    Serial.println("Initializing device...");
+    WiFi.begin(externalSSID, externalPassword);
+    unsigned long wifiStart = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - wifiStart < 10000) {
+        delay(500);
+        Serial.print(".");
+    }
+    
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("\nFailed to connect to WiFi for initialization");
+        return;
+    }
+    
+    StaticJsonDocument<256> initDoc;
+    initDoc["device_id"] = mesh.getNodeId();
+    
+    String initPayload;
+    serializeJson(initDoc, initPayload);
+    Serial.println("Initialization Payload:");
+    Serial.println(initPayload);
+
+    HTTPClient http;
+    http.begin(initApiEndpoint);
+    http.addHeader("X-API-KEY", "user");
+    http.addHeader("Content-Type", "application/json");
+
+    int httpResponseCode = http.POST(initPayload);
+    Serial.printf("Initialization HTTP Response Code: %d\n", httpResponseCode);
+
+    if (httpResponseCode > 0) {
+        String initResponse = http.getString();
+        Serial.println("Initialization Response: " + initResponse);
+        // Expected format: "SENTINEL DEVICE REGISTERED 5"
+        int lastSpace = initResponse.lastIndexOf(' ');
+        if (lastSpace >= 0) {
+            String idStr = initResponse.substring(lastSpace + 1);
+            // registeredDeviceId = idStr.toInt();
+            registeredDeviceId = 9;
+            Serial.printf("Registered Device ID: %u\n", registeredDeviceId);
+        } else {
+            Serial.println("Failed to parse device ID from init response");
+        }
+        Serial.println("Initialization successful!");
+    } else {
+        Serial.println("Initialization failed.");
+    }
+
+    http.end();
+    WiFi.disconnect(true);
+    Serial.println("Disconnected from WiFi (initialization).");
 }
 
 void setup() {
@@ -146,7 +212,7 @@ void setup() {
 
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
-    mesh.setDebugMsgTypes(ERROR | MESH_STATUS | CONNECTION |  COMMUNICATION);
+    mesh.setDebugMsgTypes(ERROR | MESH_STATUS | CONNECTION | COMMUNICATION);
     mesh.init(MESH_PREFIX, MESH_PASSWORD, &userScheduler, MESH_PORT);
 
     mesh.onReceive(&receivedCallback);
@@ -155,6 +221,8 @@ void setup() {
 
     mesh.setRoot(true);
     mesh.setContainsRoot(true);
+
+    initializeDevice();
 
     lastSentTime = millis();
 }

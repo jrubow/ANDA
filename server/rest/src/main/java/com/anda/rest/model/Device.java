@@ -27,7 +27,7 @@ public abstract class Device {
     private double battery_life;
 
     // @Column(nullable = false)
-    private LocalDateTime last_online;
+    private String last_online;
 
     // @Column(nullable = false)
     private LocalDateTime deployed_date;
@@ -43,7 +43,7 @@ public abstract class Device {
 
     // Parameterized constructor
     public Device(int device_id, double latitude, double longitude, double battery_life,
-                      LocalDateTime last_online, LocalDateTime deployed_date, int deployed) {
+                      String last_online, LocalDateTime deployed_date, int deployed) {
         this.device_id = device_id;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -86,11 +86,11 @@ public abstract class Device {
         this.battery_life = battery_life;
     }
 
-    public LocalDateTime getLastOnline() {
+    public String getLastOnline() {
         return last_online;
     }
 
-    public void setLastOnline(LocalDateTime last_online) {
+    public void setLastOnline(String last_online) {
         this.last_online = last_online;
     }
 

@@ -33,8 +33,8 @@ public class SentinelDeviceController {
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
             return ResponseEntity.badRequest().body("ERROR: You are browsing as a guest, please log in!");
         }
-        boolean isCreated = sentinelDeviceService.createSentinelDevice(device);
-        return isCreated ? ResponseEntity.ok("SENTINEL DEVICE REGISTERED") : ResponseEntity.status(400).body("SENTINEL DEVICE ALREADY EXISTS");
+        int isCreated = sentinelDeviceService.createSentinelDevice(device);
+        return isCreated != -1 ? ResponseEntity.ok("SENTINEL DEVICE REGISTERED " + isCreated) : ResponseEntity.status(400).body("SENTINEL DEVICE ALREADY EXISTS");
     }
 
     @PutMapping("/update")

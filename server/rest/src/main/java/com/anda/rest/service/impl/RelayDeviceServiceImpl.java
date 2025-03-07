@@ -60,7 +60,7 @@ public class RelayDeviceServiceImpl implements RelayDeviceService {
                     case "longitude" -> device.setLongitude((Double) value);
                     case "battery_life" -> device.setBatteryLife((Integer) value);
                     case "is_connected" -> device.setIsConnected((Integer) value);
-                    case "last_online" -> device.setLastOnline((LocalDateTime) value);
+                    case "last_online" -> device.setLastOnline((String) value);
                     case "deployed" -> device.setDeployed((Integer) value);
                     case "deployed_date" -> device.setDeployedDate((LocalDateTime) value);
                     case "sentinel_connection" -> device.setSentinelConnection((Integer) value);

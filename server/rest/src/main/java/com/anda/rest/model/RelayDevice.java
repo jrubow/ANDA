@@ -21,7 +21,7 @@ public class RelayDevice extends Device {
 
     // Main Constructor
     public RelayDevice(int sensor_id, double latitude, double longitude, double battery_life,
-                          LocalDateTime last_online, LocalDateTime deployed_date, int deployed,
+                          String last_online, LocalDateTime deployed_date, int deployed,
                           int is_connected, int num_connected_devices, int sentinel_id, int sentinel_connection) {
         super(sensor_id, latitude, longitude, battery_life, last_online, deployed_date, deployed);
         this.sentinel_id = sentinel_id;

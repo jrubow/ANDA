@@ -22,13 +22,13 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
     }
 
     @Override
-    public boolean createSentinelDevice(SentinelDevice device) {
+    public int createSentinelDevice(SentinelDevice device) {
         try {
             sentinelDeviceRepository.save(device);
-            return true;
+            return sentinelDeviceRepository.findMaxDeviceId();
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return -1;
         }
     }
 
@@ -36,6 +36,7 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
     @Override
     public boolean updateSentinelDevice(Map<String, Object> updates) {
         int id = (Integer) updates.get("device_id");
+        System.out.println(id);
         if (id < 0) {
             throw new IllegalArgumentException("device_id is required for updating user details.");
         }
@@ -46,7 +47,9 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
             return false; // Device not found
         }
 
-        Set<String> allowedFields = Set.of("latitude", "longitude", "battery_life", "last_online", "deployed", "deployed", "deployed_date", "password", "num_connected_devices");
+
+        updates.remove("device_id");
+        Set<String> allowedFields = Set.of("latitude", "longitude", "battery_life", "last_online", "deployed",  "deployed_date", "password", "num_connected_devices");
 
         for (String key : updates.keySet()) {
             if (!allowedFields.contains(key)) {
@@ -61,7 +64,7 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
                     case "longitude" -> device.setLongitude((Double) value);
                     case "battery_life" -> device.setBatteryLife((Integer) value);
                     case "is_connected" -> device.setIsConnected((Integer) value);
-                    case "last_online" -> device.setLastOnline((LocalDateTime) value);
+                    case "last_online" -> device.setLastOnline((String) value);
                     case "deployed" -> device.setDeployed((Integer) value);
                     case "deployed_date" -> device.setDeployedDate((LocalDateTime) value);
                     case "num_connected_devices" -> device.setNumConnectedDevices((Integer) value);
@@ -112,7 +115,7 @@ public class SentinelDeviceServiceImpl implements SentinelDeviceService {
         device.setAgencyId(agency_id);
         try {
             sentinelDeviceRepository.save(device);
-            return "ok";
+            return "ok " + device.getDeviceId();
         } catch (Exception e) {
             e.printStackTrace();
             return "INTERNAL SERVER ERROR";

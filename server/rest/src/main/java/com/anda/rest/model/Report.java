@@ -34,6 +34,9 @@ public class Report {
     @Column(name = "units")
     private String units;
 
+    @Column(name = "timestamp")
+    private String timestamp;
+
     public Report() {
     }
 
@@ -42,11 +45,13 @@ public class Report {
             @JsonProperty("device_id") int device_id,
             @JsonProperty("report_type") String report_type,
             @JsonProperty("value") double value,
-            @JsonProperty("units") String units) {
+            @JsonProperty("units") String units,
+            @JsonProperty("timestamp") String timestamp) {
         this.device_id = device_id;
         this.report_type = report_type;
         this.value = value;
         this.units = units;
+        this.timestamp = timestamp;
     }
 
 //    public Report(int device_id, String report_type, double value, String units) {
@@ -96,4 +101,12 @@ public class Report {
     public void setUnits(String units) {
         this.units = units;
     }
-}
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getTimestamp() {
+        return this.timestamp;
+    }
+ }

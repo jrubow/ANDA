@@ -1,24 +1,24 @@
 package com.anda.rest.service.impl;
 
-import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-// import java.util.regex.Pattern;
 
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties.Sentinel;
 import org.springframework.stereotype.Service;
 import com.anda.rest.model.Report;
 import com.anda.rest.repository.ReportRepository;
 import com.anda.rest.service.ReportService;
+import com.anda.rest.service.SentinelDeviceService;
+import java.util.Map;
 
 @Service
 public class ReportServiceImpl implements ReportService {
     private final ReportRepository reportRepository;
+    private final SentinelDeviceService sentinelDeviceService;
 
-    // Constructor for ReportServiceImpl
-    public ReportServiceImpl(ReportRepository ReportRepository) {
-        this.reportRepository = ReportRepository;
+    // Inject both ReportRepository and SentinelDeviceService
+    public ReportServiceImpl(ReportRepository reportRepository, SentinelDeviceService sentinelDeviceService) {
+        this.reportRepository = reportRepository;
+        this.sentinelDeviceService = sentinelDeviceService;
     }
 
     @Override
@@ -26,6 +26,7 @@ public class ReportServiceImpl implements ReportService {
         try {
             report.setReportId(getNextReportId());
             reportRepository.save(report);
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,6 +52,15 @@ public class ReportServiceImpl implements ReportService {
     public void createBatchReport(List<Report> reports) {
         for (Report report : reports) {
             createReport(report);
+        }
+
+        if (!reports.isEmpty()) {
+            System.out.println(reports.get(0));
+            System.out.println(reports.get(0).getDeviceId());
+            Map<String, Object> updateData = new HashMap<>();
+            updateData.put("device_id", reports.get(0).getDeviceId());
+            updateData.put("last_online", reports.get(0).getTimestamp());
+            sentinelDeviceService.updateSentinelDevice(updateData);
         }
     }
 
