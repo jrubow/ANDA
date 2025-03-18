@@ -171,4 +171,12 @@ public class AdminServiceImpl implements AdminService {
         }
         return false;
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        if (adminRepository.findByEmail(email) != null) {
+            return true;
+        }
+        return false;
+    }
 }

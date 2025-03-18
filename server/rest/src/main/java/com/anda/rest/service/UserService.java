@@ -10,10 +10,11 @@ import java.util.Map;
  */
 
 public interface UserService {
-    public User checkUserCredentials(String user, String password);
+    User checkUserCredentials(String user, String password);
     boolean registerUser(User user);
-    public boolean updateUserDetails(Map<String, Object> updates);
-    public boolean existsByUsername(String username);
-    public boolean deleteUser(String username, String password);
-    public User getByUsername(String username);
+    boolean updateUserDetails(Map<String, Object> updates);
+    boolean existsByUsername(String username);
+    boolean deleteUser(String username, String password);
+    User getByUsername(String username);
+    boolean existsByEmail(String email);
 }

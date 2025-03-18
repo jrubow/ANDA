@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends JpaRepository<User, String> {
     User findByUsername(String username);
+    User findByEmail(String email);
 
     @Modifying
     @Transactional

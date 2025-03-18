@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface AdminRepository extends JpaRepository<Admin, String> {
     Admin findByUsername(String username);
+    Admin findByEmail(String email);
 
     @Modifying
     @Transactional

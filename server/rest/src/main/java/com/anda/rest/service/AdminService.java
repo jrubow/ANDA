@@ -12,9 +12,10 @@ public interface AdminService {
     boolean registerAdmin(Admin admin);
     Admin checkAdminCredentials(String username, String password);
     boolean updateAdminDetails(Map<String, Object> updates);
-    public boolean existsByUsername(String username);
-    public boolean verifyAdmin(String username);
+    boolean existsByUsername(String username);
+    boolean verifyAdmin(String username);
     Admin getByUsername(String username);
-    public int getLoginAttempts(String username);
-    public boolean deleteAdmin(String username, String password);
+    int getLoginAttempts(String username);
+    boolean deleteAdmin(String username, String password);
+    boolean existsByEmail(String email);
 }
