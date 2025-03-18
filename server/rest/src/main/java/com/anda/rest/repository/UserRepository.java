@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
+
 /**
  * Interface for User repository
  * @author Gleb Bereziuk (gl3bert)
@@ -27,4 +29,9 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT u.login_attempts FROM User u WHERE u.username = :username")
     int getLoginAttempts(String username);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE User u SET u.last_login = :lastLogin WHERE u.username = :username")
+    void updateLastLogin(String username, LocalDateTime lastLogin);
 }

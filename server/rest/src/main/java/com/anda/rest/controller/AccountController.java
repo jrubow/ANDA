@@ -251,7 +251,7 @@ public class AccountController {
                 emailService.sendEmail(admin.getEmail(), "ANDA: Account deleted",
                                 "This is an automatic message from ANDA system.\n\n" +
                                 admin.getFirst_name() + ", your account has been deleted successfully. " +
-                                "Your data is no longer stored with us nor with your agency within ANDA. We will miss you!..\n\n" +
+                                "Your data is no longer stored with us nor with your agency within ANDA. We will miss you!\n\n" +
                                 "Generated: " + now);
                 return ResponseEntity.ok("ADMIN ACCOUNT DELETED SUCCESSFULLY");
             }
@@ -262,7 +262,7 @@ public class AccountController {
             emailService.sendEmail(user.getEmail(), "ANDA: Account deleted",
                             "This is an automatic message from ANDA system.\n\n" +
                             user.getFirst_name() + ", your account has been deleted successfully. " +
-                            "Your data is no longer stored with us. We will miss you!..\n\n" +
+                            "Your data is no longer stored with us. We will miss you!\n\n" +
                             "Generated: " + now);
 
             return ResponseEntity.ok("USER ACCOUNT DELETED SUCCESSFULLY");

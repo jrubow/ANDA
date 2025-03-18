@@ -8,6 +8,7 @@ import com.anda.rest.service.AdminService;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -67,6 +68,9 @@ public class AdminServiceImpl implements AdminService {
         if (admin != null) {
             adminRepository.incrementLoginAttempts(username);
             if (BCrypt.checkpw(password, admin.getPassword())) {
+                adminRepository.resetLoginAttempts(username);
+                LocalDateTime now = LocalDateTime.now();
+                adminRepository.updateLastLogin(username, now);
                 return admin;
             }
             return new Admin(null, adminRepository.getLoginAttempts(username));

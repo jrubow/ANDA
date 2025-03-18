@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -105,6 +106,8 @@ public class UserServiceImpl implements UserService {
             userRepository.incrementLoginAttempts(username);
             if (BCrypt.checkpw(password, user.getPassword())) {
                 userRepository.resetLoginAttempts(username);
+                LocalDateTime now = LocalDateTime.now();
+                userRepository.updateLastLogin(username, now);
                 return user;
             }
             return new User(null, userRepository.getLoginAttempts(username));

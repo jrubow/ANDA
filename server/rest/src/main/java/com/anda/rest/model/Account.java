@@ -3,6 +3,8 @@ package com.anda.rest.model;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 
+import java.time.LocalDateTime;
+
 /**
  * Superclass for managing User and Admin objects
  * @author Gleb Bereziuk (gl3bert)
@@ -24,6 +26,8 @@ public abstract class Account {
     private int snow;
     private int rain;
     private int humidity;
+    private LocalDateTime last_login;
+    private boolean warning_sent;
 
     public Account(String username, String password, String email, String first_name, String last_name,
                    String address, String phone_number, int share_location, int temperature, int snow, int rain, int humidity) {
@@ -153,5 +157,21 @@ public abstract class Account {
 
     public void setHumidity(int humidity) {
         this.humidity = humidity;
+    }
+
+    public LocalDateTime getLast_login() {
+        return last_login;
+    }
+
+    public void setLast_login(LocalDateTime last_login) {
+        this.last_login = last_login;
+    }
+
+    public boolean isWarning_sent() {
+        return warning_sent;
+    }
+
+    public void setWarning_sent(boolean warning_sent) {
+        this.warning_sent = warning_sent;
     }
 }
