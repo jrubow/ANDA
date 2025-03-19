@@ -133,7 +133,7 @@ public class AccountController {
             if (isCreated)  {
                 Agency agency = agencyService.getAgency(admin.getAgency_id());
                 LocalDateTime now = LocalDateTime.now();
-                emailService.sendEmail(agency.getEmail(), "ANDA: Verify New Agency Admin Account",
+                emailService.sendEmail(agency.getEmail(), "ANDA: New Agency Admin Account Requested",
                                 "This is an automatic message from ANDA system.\n" +
                                 "A new admin has just registered with " + agency.getName() + ".\n\n" +
                                 "Name: " + admin.getLast_name() + ", " + admin.getFirst_name() + "\n" +
@@ -143,7 +143,7 @@ public class AccountController {
                                 "To verify this admin, follow the link below\n" +
                                 "http://localhost:8080/api/verify/" + admin.getUsername() + "\n\n\n" +
                                 "Generated: " + now);
-                emailService.sendEmail(admin.getEmail(), "ANDA: Registration confirmation",
+                emailService.sendEmail(admin.getEmail(), "ANDA: Admin Registration Confirmation",
                                 "This is an automatic message from ANDA system.\n" +
                                 admin.getFirst_name() + ", you have successfully signed up as an admin for " + agency.getName() + ".\n\n" +
                                 "A verification email has been sent to your agency. Once a representative verifies your account, " +
@@ -170,7 +170,7 @@ public class AccountController {
 
             if (isCreated) {
                 LocalDateTime now = LocalDateTime.now();
-                emailService.sendEmail(user.getEmail(), "ANDA: Registration confirmation",
+                emailService.sendEmail(user.getEmail(), "ANDA: Welcome!",
                                 "This is an automatic message from ANDA system.\n\n" +
                                 user.getFirst_name() + ", thank you for registering with ANDA. " +
                                 "We are happy to have you with us!\n\n" +
@@ -189,7 +189,7 @@ public class AccountController {
         if (isVerified) {
             Admin admin = adminService.getByUsername(username);
             LocalDateTime now = LocalDateTime.now();
-            emailService.sendEmail(admin.getEmail(), "ANDA: Verification confirmation",
+            emailService.sendEmail(admin.getEmail(), "ANDA: Admin Account Verified",
                             "This is an automatic message from ANDA system.\n\n" +
                             admin.getFirst_name() + ", you have been verified by your agency. " +
                             "You now have access to you account!\n\n" +
@@ -248,7 +248,7 @@ public class AccountController {
             }
             if (isDeleted) {
                 LocalDateTime now = LocalDateTime.now();
-                emailService.sendEmail(admin.getEmail(), "ANDA: Account deleted",
+                emailService.sendEmail(admin.getEmail(), "ANDA: Account Deleted",
                                 "This is an automatic message from ANDA system.\n\n" +
                                 admin.getFirst_name() + ", your account has been deleted successfully. " +
                                 "Your data is no longer stored with us nor with your agency within ANDA. We will miss you!\n\n" +
@@ -259,7 +259,7 @@ public class AccountController {
         }
         else {
             LocalDateTime now = LocalDateTime.now();
-            emailService.sendEmail(user.getEmail(), "ANDA: Account deleted",
+            emailService.sendEmail(user.getEmail(), "ANDA: Account Deleted",
                             "This is an automatic message from ANDA system.\n\n" +
                             user.getFirst_name() + ", your account has been deleted successfully. " +
                             "Your data is no longer stored with us. We will miss you!\n\n" +

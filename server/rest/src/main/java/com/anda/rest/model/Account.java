@@ -51,9 +51,18 @@ public abstract class Account {
         this.login_attempts = loginAttempts;
     }
 
-    public Account() {
-
+    // For returning to the SystemAdmin table
+    public Account(String username, String firstName, String lastName, String email, String phone, LocalDateTime lastLogin, boolean warned) {
+        this.username = username;
+        this.first_name = firstName;
+        this.last_name = lastName;
+        this.email = email;
+        this.phone_number = phone;
+        this.last_login = lastLogin;
+        this.warning_sent = warned;
     }
+
+    public Account() {}
 
     public String getUsername() {
         return username;

@@ -1,6 +1,7 @@
 package com.anda.rest.controller;
 
 import com.anda.rest.model.SystemAdmin;
+import com.anda.rest.model.User;
 import com.anda.rest.service.AdminService;
 import com.anda.rest.service.EmailService;
 import com.anda.rest.service.SystemAdminService;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Controller for SystemAdmin class.
@@ -126,5 +128,54 @@ public class SystemAdminController {
         else {
             return ResponseEntity.badRequest().body("INVALID CREDENTIALS");
         }
+    }
+
+    // Get the list of all users.
+    @GetMapping("/users/all")
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    // Get the list of inactive users.
+    @GetMapping("/users/inactive")
+    public List<User> getInactiveUsers() {
+        return userService.getInactiveUsers();
+    }
+
+    // Send deletion warning.
+    @PostMapping("/users/warn/{username}")
+    public ResponseEntity<?> warnUser(@PathVariable String username) {
+        User user = userService.getByUsername(username);
+        if (user != null && !user.isWarning_sent()) {
+            userService.warnUser(username);
+            LocalDateTime now = LocalDateTime.now();
+            emailService.sendEmail(user.getEmail(), "ANDA: Account Termination Warning",
+                    "This is an automated message from ANDA system.\n\n" +
+                            user.getFirst_name() + ", your account has been marked for deletion due to inactivity " +
+                            "per ANDA policies. Your account will be deleted after " + now.plusDays(7) +
+                            ". Log in to ANDA to avoid termination!\n\n" +
+                            "Generated: " + now);
+            return ResponseEntity.ok("USER WARNED");
+        }
+        return ResponseEntity.badRequest().body("USER NOT FOUND OR WARNING ALREADY SENT");
+    }
+
+    // Delete user.
+    @PostMapping("/users/delete/{username}")
+    public ResponseEntity<?> deleteUser(@PathVariable String username) {
+        User user = userService.getByUsername(username);
+        if (user != null) {
+            if (userService.deleteUser(username)) {
+                LocalDateTime now = LocalDateTime.now();
+                emailService.sendEmail(user.getEmail(), "ANDA: Account Deleted",
+                        "This is an automated message from ANDA system.\n\n" +
+                                user.getFirst_name() + ", your account has been permanently deleted for inactivity " +
+                                "per ANDA policies. We are sad to see you go, but feel free to register again later!\n\n" +
+                                "Generated: " + now);
+                return ResponseEntity.ok("USER DELETED");
+            }
+            ResponseEntity.status(400).body("ERROR DELETING USER");
+        }
+        return ResponseEntity.badRequest().body("USER NOT FOUND");
     }
 }
