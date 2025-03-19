@@ -134,7 +134,7 @@ function LoginPage() {
           <Link to="/register">Create Account</Link> | <a href="#">Forgot Password?</a>
         </div>
         <div className="terms">
-          <a href="#">Terms</a> | <a href="#">Privacy Policy</a>
+          <a href="#">Terms</a> | <a href="#">Privacy Policy</a> | <Link to="/sysadmin/login">System Admins</Link>
         </div>
       </div>
     </div>
