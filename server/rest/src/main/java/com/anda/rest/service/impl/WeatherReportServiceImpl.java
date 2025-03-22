@@ -58,14 +58,14 @@ public class WeatherReportServiceImpl implements WeatherReportService {
         updates.forEach((key, value) -> {
             if (value != null) {
                 switch (key) {
-                    case "report_type" -> weatherReport.setReport_type((String) value);
-                    case "units" -> weatherReport.setUnits((String) value);
-		            case "message" -> weatherReport.setMessage((String) value);
-		            case "source" -> weatherReport.setSource((String) value);
-                    case "render_long" -> weatherReport.setRender_long((Double) value);
-                    case "render_lat" -> weatherReport.setRender_lat((Double) value);
-                    case "render_rad" -> weatherReport.setRender_radius((Double) value);
-                    default -> throw new IllegalArgumentException("Invalid field: " + key);
+                    case "report_type" : weatherReport.setReport_type((String) value); break;
+                    case "units" : weatherReport.setUnits((String) value); break;
+		            case "message" : weatherReport.setMessage((String) value); break;
+		            case "source" : weatherReport.setSource((String) value); break;
+                    case "render_long" : weatherReport.setRender_long((Double) value); break;
+                    case "render_lat" : weatherReport.setRender_lat((Double) value); break;
+                    case "render_rad" : weatherReport.setRender_radius((Double) value); break;
+                    default : throw new IllegalArgumentException("Invalid field: " + key);
                 }
             }
         });

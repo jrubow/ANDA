@@ -81,30 +81,33 @@ public class UserServiceImpl implements UserService {
         updates.forEach((key, value) -> {
             if (value != null) {
                 switch (key) {
-                    case "password" -> {
+                    case "password" : {
                         if (!Pattern.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", (String) value)) {
                             throw new IllegalArgumentException("Password does not meet security requirements.");
                         }
                         existingUser.setPassword(BCrypt.hashpw((String) value, BCrypt.gensalt(12)));
+                        break;
                     }
-                    case "email" -> {
+                    case "email" : {
                         if (!Pattern.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", (String) value)) {
                             throw new IllegalArgumentException("Invalid email format.");
                         }
                         existingUser.setEmail((String) value);
+                        break;
                     }
-                    case "address" -> existingUser.setAddress((String) value);
-                    case "phone_number" -> {
+                    case "address" : existingUser.setAddress((String) value);
+                    case "phone_number" : {
                         if (!Pattern.matches("^\\d{10}$", value.toString())) {
                             throw new IllegalArgumentException("Phone number must be exactly 10 digits.");
                         }
                         existingUser.setPhone_number((String) value);
+                        break;
                     }
-                    case "share_location" -> existingUser.setShare_location((Integer) value);
-                    case "snow" -> existingUser.setSnow(1 ^ existingUser.getSnow());
-                    case "rain" -> existingUser.setRain(1 ^ existingUser.getRain());
-                    case "temperature" -> existingUser.setTemperature(1 ^ existingUser.getTemperature());
-                    case "humidity" -> existingUser.setHumidity(1 ^ existingUser.getHumidity());
+                    case "share_location" : existingUser.setShare_location((Integer) value); break;
+                    case "snow" : existingUser.setSnow(1 ^ existingUser.getSnow()); break;
+                    case "rain" : existingUser.setRain(1 ^ existingUser.getRain());
+                    case "temperature" : existingUser.setTemperature(1 ^ existingUser.getTemperature()); break;
+                    case "humidity" : existingUser.setHumidity(1 ^ existingUser.getHumidity()); break;
                 }
             }
         });

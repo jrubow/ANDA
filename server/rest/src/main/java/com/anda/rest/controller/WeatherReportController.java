@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @RestController
-@RequestMapping("/api/weather_report")
+@RequestMapping("/api/weatherReport")
 public class WeatherReportController {
 
     WeatherReportService weatherReportService;
@@ -46,26 +46,38 @@ public class WeatherReportController {
         return ResponseEntity.status(403).body("Access Denied");
     }
 
-//    @GetMapping("/report_id")
-//    public ResponseEntity<?> getFilterByUsername(@RequestBody Map<String, Object> body) {
-//        try {
-//            // Extract deviceId from the request
-//            int report_id = (String) body.get("report_id")
-//
-//                return ResponseEntity.badRequest()
-//                        .body("ERROR : username SHOULD NOT BE NEGATIVE");
-//            }
-//
-//            // Retrieve filters using the username
-//            List<WeatherReport> reports = filterService.getFiltersByUsername(username);
-//
-//            // Spring Boot will automatically convert the List<Report> to JSON
-//            return ResponseEntity.ok(filters);
-//        } catch (Exception e) {
-//            // Return a JSON formatted error message in case of exception
-//            return ResponseEntity.status(500)
-//                    .body("ERROR : COULD NOT RETRIEVE USER'S FILTER");
-//        }
-//    }
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllWeatherReports() {
+        try {
+            List<WeatherReport> reports = weatherReportService.getAllWeatherReports();
+            if (reports.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(reports);
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body("ERROR: COULD NOT RETRIEVE REPORTS");
+        }
+    }
+
+
+    @GetMapping("/report/{report_id}")
+    public ResponseEntity<?> getFilterByReportId(@PathVariable("report_id") int reportId) {
+        try {
+            if (reportId < 0) {
+                return ResponseEntity.badRequest()
+                    .body("ERROR: report_id SHOULD NOT BE NEGATIVE");
+            }
+
+            // Retrieve reports using the reportId
+            List<WeatherReport> reports = filterService.getFiltersByReportId(reportId);
+
+            // Return the reports
+            return ResponseEntity.ok(reports);
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body("ERROR: COULD NOT RETRIEVE REPORTS");
+        }
+    }
 
 }
